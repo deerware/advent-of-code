@@ -2,6 +2,7 @@ import fs from 'fs';
 import log from '../log'
 
 export default function main() {
+    log("Day 1: Trebuchet?!")
     part1(fs.readFileSync('01_Trebuchet/sampleData1.txt').toString());
     part1(fs.readFileSync('01_Trebuchet/input.txt').toString());
 }
