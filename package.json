@@ -1,0 +1,14 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Advent of code 2023",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "deerware Milan Jelínek",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^20.10.2"
+  }
+}
