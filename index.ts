@@ -6,7 +6,7 @@ try {
     cube_conundrum();
 } catch (e) {
     log('Error:', (e as any).message);
-}
 
-log('Waiting 60s to exit...');
-setTimeout(() => { log('Exit') }, 60000);
+    log('Waiting 60s to exit...');
+    setTimeout(() => { log('Exit') }, 60000);
+}
