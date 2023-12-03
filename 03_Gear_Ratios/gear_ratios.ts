@@ -8,25 +8,17 @@ export default async function main() {
     log("Day 3: Gear Ratios");
 
     logResult('Part 1 test', await part1(loadLines('03_Gear_Ratios/sampleData1.txt')), 4361)
-
-    const p1 = await part1(loadLines('03_Gear_Ratios/input.txt'));
-    log(colors.fg.yellow + `Part 1: ${p1}`);
+    logResult('Part 1', await part1(loadLines('03_Gear_Ratios/input.txt')))
 
     log();
 
-    // const p2test = await part2(loadLines('03_Gear_Ratios/sampleData2.txt'));
-    // const p2testr = 0;
-    // log((p2test === p2testr ? colors.fg.green : colors.fg.red) + `Part 2 test: ${p2test} ${p2test === p2testr ? '===' : '!=='} ${p2testr} ${p2test === p2testr ? "PASS" : "FAIL"}`);
+    logResult('Part 2 test', await part2(loadLines('03_Gear_Ratios/sampleData1.txt')), 467835)
+    logResult('Part 2', await part2(loadLines('03_Gear_Ratios/input.txt')))
 
-    // const p2 = part2(await loadLines('03_Gear_Ratios/input.txt'));
-    // log(colors.fg.yellow + `Part 2: ${p2}`);
     log(colors.fg.gray + `Executed in ${(new Date().getTime() - startTime.getTime())}ms`);
 }
 
-async function part1(data: string[]): Promise<number> {
-    const symbols: [number, number, string][] = [];
-    const numbers: [number, number, string][] = [];
-
+async function part1(data: string[], symbols: [number, number, string, number[]][] = [], numbers: [number, number, string][] = []): Promise<number> {
     data.forEach((line, i) => {
         let j = -1;
         while (true) {
@@ -34,7 +26,7 @@ async function part1(data: string[]): Promise<number> {
             if (j === -1)
                 break;
 
-            symbols.push([i, j, line[j]]);
+            symbols.push([i, j, line[j], []]);
         }
     });
     // log(symbols);
@@ -61,13 +53,17 @@ async function part1(data: string[]): Promise<number> {
     numbers.forEach(number => {
         const valid = symbols.find(symbol => {
             if (symbol[0] === number[0])
-                if (symbol[1] === number[1] - 1 || symbol[1] === number[1] + number[2].length)
+                if (symbol[1] === number[1] - 1 || symbol[1] === number[1] + number[2].length) {
+                    symbol[3].push(parseInt(number[2]));
                     return true;
+                }
 
             if (symbol[0] == number[0] - 1 || symbol[0] == number[0] + 1)
                 if (symbol[1] >= number[1] - 1)
-                    if (symbol[1] <= number[1] + number[2].length)
+                    if (symbol[1] <= number[1] + number[2].length) {
+                        symbol[3].push(parseInt(number[2]));
                         return true;
+                    }
 
             return false;
         }) ?? false;
@@ -82,5 +78,17 @@ async function part1(data: string[]): Promise<number> {
 }
 
 async function part2(data: string[]): Promise<number> {
-    throw new Error('Not implemented');
+    const symbols: [number, number, string, number[]][] = [];
+    const numbers: [number, number, string][] = [];
+    part1(data, symbols, numbers);
+
+    let sum = 0;
+    symbols.filter(symbol => symbol[2] === '*' && symbol[3].length !== 1).forEach(symbol => {
+        if (symbol[3].length !== 2)
+            throw new Error('Count error');
+
+        sum += symbol[3][0] * symbol[3][1];
+    });
+
+    return sum;
 }
