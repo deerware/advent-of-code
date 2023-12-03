@@ -14,3 +14,8 @@ export function logResult(title: string, result: number, expected?: number) {
 export function loadLines(path: string) {
     return fs.readFileSync(path).toString().split('\r\n');
 }
+
+export function regexIndexOf(string: string, regex: RegExp, startpos?: number) {
+    var indexOf = string.substring(startpos || 0).search(regex);
+    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
+}
