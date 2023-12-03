@@ -7,13 +7,13 @@ export default async function main() {
     const startTime = new Date();
     log("Day 3: Gear Ratios");
 
-    logResult('Part 1 test', await part1(loadLines('03_Gear_Ratios/sampleData1.txt')), 4361)
-    logResult('Part 1', await part1(loadLines('03_Gear_Ratios/input.txt')))
+    if (logResult('Part 1 test', await part1(loadLines('03_Gear_Ratios/sampleData1.txt')), 4361))
+        logResult('Part 1', await part1(loadLines('03_Gear_Ratios/input.txt')))
 
     log();
 
-    logResult('Part 2 test', await part2(loadLines('03_Gear_Ratios/sampleData1.txt')), 467835)
-    logResult('Part 2', await part2(loadLines('03_Gear_Ratios/input.txt')))
+    if (logResult('Part 2 test', await part2(loadLines('03_Gear_Ratios/sampleData1.txt')), 467835))
+        logResult('Part 2', await part2(loadLines('03_Gear_Ratios/input.txt')))
 
     log(colors.fg.gray + `Executed in ${(new Date().getTime() - startTime.getTime())}ms`);
 }

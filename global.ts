@@ -9,6 +9,8 @@ export function logResult(title: string, result: number, expected?: number) {
         log((pass ? colors.fg.green : colors.fg.red) + `${title}: ${result} ${pass ? '===' : '!=='} ${expected} ${pass ? "PASS" : "FAIL"}`);
     else
         log(colors.fg.yellow + `${title}: ${result}`);
+
+    return pass || expected === undefined;
 }
 
 export function loadLines(path: string) {
