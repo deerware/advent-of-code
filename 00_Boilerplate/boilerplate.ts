@@ -11,7 +11,7 @@ export default async function main() {
 
     log();
 
-    if (logResult('Part 2 test', await part2(loadLines('<<DAY>>/sampleData1.txt')), 0))
+    if (logResult('Part 2 test', await part2(loadLines('<<DAY>>/sampleData2.txt')), 0))
         logResult('Part 2', await part2(loadLines('<<DAY>>/input.txt')))
 
     log(colors.fg.gray + `Executed in ${(new Date().getTime() - startTime.getTime())}ms`);

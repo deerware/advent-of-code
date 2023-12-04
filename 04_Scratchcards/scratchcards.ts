@@ -39,10 +39,34 @@ async function part1(data: string[]): Promise<number> {
     });
 
     return sum;
-
-    return -Infinity;
 }
 
 async function part2(data: string[]): Promise<number> {
-    return -Infinity;
+    const counts: { [key: number]: number } = {};
+
+    for (let i = 1; i <= data.length; i++)
+        counts[i] = 1;
+
+    data.forEach(line => {
+        let data = line.split(': ');
+        const cardNo = parseInt(data[0].split(" ").slice(-1)[0]);
+        if (isNaN(cardNo))
+            throw new Error("NaN");
+
+        data = data[1].split(' | ');
+        const winningNos = data[0].split(' ').map(n => n === "" ? false : parseInt(n)).filter(n => n !== false);
+        const myNos = data[1].split(' ').map(n => n === "" ? false : parseInt(n)).filter(n => n !== false);
+
+        const myPoints = counts[cardNo];
+        const points = myNos.filter(n => winningNos.includes(n)).length;
+        for (let i = 1; i <= points; i++) {
+            counts[cardNo + i] += myPoints;
+        }
+    });
+
+    let sum = 0;
+    Object.values(counts).forEach(c => {
+        sum += c;
+    });
+    return sum;
 }
