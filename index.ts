@@ -4,6 +4,7 @@ import gear_ratios from './03_Gear_Ratios/gear_ratios'
 import scratchcards from './04_Scratchcards/scratchcards';
 import seedfertilizer from './05_Seed_Fertilizer/seedfertilizer';
 import waitforit from './06_Wait_For_It/waitforit';
+import camelcards from './07_Camel_Cards/camelcards';
 import log from './log';
 
 (async () => {
@@ -13,7 +14,8 @@ import log from './log';
         // await gear_ratios();
         // await scratchcards();
         // await seedfertilizer();
-        await waitforit();
+        // await waitforit();
+        await camelcards();
     } catch (e) {
         log('Error:', (e as any).message);
     }
