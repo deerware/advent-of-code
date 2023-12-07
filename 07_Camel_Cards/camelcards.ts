@@ -12,18 +12,26 @@ export default async function main() {
     log();
 
     if (logResult('Part 2 test', await part2(loadLines('07_Camel_Cards/sampleData2.txt')), 5905))
-        logResult('Part 2', await part2(loadLines('07_Camel_Cards/input.txt')))
+        logResult('Part 2', await part2(loadLines('07_Camel_Cards/input.txt')), 248747492)
 
     log(colors.fg.gray + `Executed in ${(new Date().getTime() - startTime.getTime())}ms`);
 }
 
 async function part1(data: string[]): Promise<number> {
+    return await part0(data, false);
+}
+
+async function part2(data: string[]): Promise<number> {
+    return await part0(data, true);
+}
+
+async function part0(data: string[], J = false) {
     const hands: Hand[] = data.map(x => ({
         cards: x.split(/ +/)[0],
         bet: parseInt(x.split(/ +/)[1])
     }));
 
-    hands.sort(compareHands);
+    hands.sort((a, b) => compareHands(a, b, J));
 
     let sum = 0;
     for (let i = 0; i < hands.length; i++) {
@@ -33,13 +41,9 @@ async function part1(data: string[]): Promise<number> {
     return sum;
 }
 
-async function part2(data: string[]): Promise<number> {
-    return -Infinity;
-}
-
 type Hand = { cards: string, bet: number };
 
-function cardValue(card: Hand) {
+function cardValue(card: Hand, J = false) {
     let i = card.cards.length;
     let counts: { [key: string]: number } = {};
     while (i--) {
@@ -47,6 +51,15 @@ function cardValue(card: Hand) {
             counts[card.cards[i]] = 1
         else
             counts[card.cards[i]]++;
+    }
+
+    if (J && card.cards.includes('J')) {
+        const keys = Object.keys(counts).filter(x => x !== "J");
+        if (keys.length === 0)
+            return cardValue({ cards: card.cards, bet: card.bet }, false);
+        const best = keys.reduce((a, b) => counts[a] > counts[b] ? a : b);
+        const newCard = card.cards.split('J').join(best);
+        return cardValue({ cards: newCard, bet: card.bet }, false);
     }
 
     const max = Math.max(...Object.values(counts));
@@ -73,23 +86,23 @@ function cardValue(card: Hand) {
     return 1;
 }
 
-function compareHands(a: Hand, b: Hand) {
-    if (cardValue(a) > cardValue(b))
+function compareHands(a: Hand, b: Hand, J = false) {
+    if (cardValue(a, J) > cardValue(b, J))
         return 1;
-    if (cardValue(a) < cardValue(b))
+    if (cardValue(a, J) < cardValue(b, J))
         return -1;
 
     let compare = 0;
     let i = 0;
     while (compare === 0 && i < a.cards.length) {
-        compare = compareCards(a.cards[i], b.cards[i]);
+        compare = (J ? (a: string, b: string) => compareCards(a, b, true) : compareCards)(a.cards[i], b.cards[i]);
         i++;
     }
     return compare;
 }
 
-function compareCards(a: string, b: string) {
-    const values = '23456789TJQKA';
+function compareCards(a: string, b: string, J = false) {
+    const values = J ? 'J23456789TQKA' : '23456789TJQKA';
     const aIndex = values.indexOf(a);
     const bIndex = values.indexOf(b);
 
