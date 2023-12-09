@@ -6,6 +6,7 @@ import seedfertilizer from './05_Seed_Fertilizer/seedfertilizer';
 import waitforit from './06_Wait_For_It/waitforit';
 import camelcards from './07_Camel_Cards/camelcards';
 import hauntedWasteland from './08_Haunted_Wasteland/hauntedwasteland';
+import miragemaintenance from './09_Mirage_Maintenance/miragemaintenance';
 import log from './log';
 
 (async () => {
@@ -17,7 +18,8 @@ import log from './log';
         // await seedfertilizer();
         // await waitforit();
         // await camelcards();
-        await hauntedWasteland();
+        // await hauntedWasteland();
+        await miragemaintenance();
     } catch (e) {
         log('Error:', (e as any).message);
     }
