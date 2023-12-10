@@ -16,12 +16,12 @@ import log from './log';
         // await cube_conundrum();
         // await gear_ratios();
         // await scratchcards();
-        // await seedfertilizer();
+        await seedfertilizer();
         // await waitforit();
         // await camelcards();
         // await hauntedWasteland();
         // await miragemaintenance();
-        await pipemaze();
+        // await pipemaze();
     } catch (e) {
         log('Error:', (e as any).message);
     }
