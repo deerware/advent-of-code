@@ -1,25 +1,40 @@
 import log from '../log'
 import { colors } from '../types'
 import { loadLines, logResult } from '../global';
+import * as global from '../global';
 
 export default async function main() {
-    const startTime = new Date();
     log("Day 11: Cosmic Expansion");
 
-    if (logResult('Part 1 test', await part1(loadLines('11_Cosmic_Expansion/sampleData1.txt')), 374))
-        logResult('Part 1', await part1(loadLines('11_Cosmic_Expansion/input.txt')), 9274989)
+    global.startExecution();
+    if (logResult('Part 1 test', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt')), 374)) {
+        global.logExectionTime();
+
+        global.startExecution();
+        logResult('Part 1', await part0(loadLines('11_Cosmic_Expansion/input.txt')), 9274989)
+    }
+    global.logExectionTime();
 
     log();
 
-    if (logResult('Part 2 test', await part2(loadLines('11_Cosmic_Expansion/sampleData2.txt')), 8410))
-        logResult('Part 2', await part2(loadLines('11_Cosmic_Expansion/input.txt')))
+    global.startExecution();
+    if (logResult('Part 2 test 1', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt'), 10), 1030)) {
+        global.logExectionTime();
 
-    log(colors.fg.gray + `Executed in ${(new Date().getTime() - startTime.getTime())}ms`);
+        global.startExecution();
+        if (logResult('Part 2 test 2', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt'), 100), 8410)) {
+            global.logExectionTime();
+
+            global.startExecution();
+            logResult('Part 2', await part0(loadLines('11_Cosmic_Expansion/input.txt'), 1000000), 357134560737)
+        }
+    }
+    global.logExectionTime();
 }
 
-async function part1(data: string[]): Promise<number> {
-    const map = createMap(data);
-
+function part0(data: string[], increaseBy = 2) {
+    increaseBy--;
+    const map = createMap(data, increaseBy)
     let sum = 0;
     for (let i in map) {
         const pos1 = map[i];
@@ -28,17 +43,12 @@ async function part1(data: string[]): Promise<number> {
             sum += Math.abs(pos1[0] - pos2[0]) + Math.abs(pos1[1] - pos2[1]);
         }
     }
-
     return sum;
-}
-
-async function part2(data: string[]): Promise<number> {
-    return -Infinity;
 }
 
 type Pos = [line: number, col: number];
 
-function createMap(data: string[]) {
+function createMap(data: string[], increaseBy: number): Pos[] {
     const positions: Pos[] = [];
     for (let i in data) {
         const l = parseInt(i);
@@ -48,23 +58,28 @@ function createMap(data: string[]) {
             positions.push([l, c]);
     }
 
+    if (increaseBy === 0)
+        return positions;
+
     let inc = 0;
     for (let i in data) {
-        const l = parseInt(i) + inc;
+        const l = parseInt(i) + inc * increaseBy;
+
         if (!positions.some(pos => pos[0] === l)) {
             inc++;
             for (const pos of positions.filter(pos => pos[0] > l))
-                pos[0]++;
+                pos[0] += increaseBy;
         }
     }
 
     inc = 0;
     for (let i = 0; i < data[0].length; i++) {
-        const c = i + inc;
+        const c = i + inc * increaseBy;
+
         if (!positions.some(pos => pos[1] === c)) {
             inc++;
             for (const pos of positions.filter(pos => pos[1] > c))
-                pos[1]++;
+                pos[1] += increaseBy;
         }
     }
 
