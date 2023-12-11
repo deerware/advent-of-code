@@ -2,6 +2,7 @@ import log from '../log'
 import { colors } from '../types'
 import { loadLines, logResult } from '../global';
 import * as global from '../global';
+import fs from 'fs';
 
 export default async function main() {
     log("Day 10: Pipe Maze");
@@ -23,7 +24,7 @@ export default async function main() {
     log();
 
     global.startExecution();
-    if (logResult('Part 2 test 1', await part2(loadLines('10_Pipe_Maze/sampleData3.txt')), 8)) {
+    if (true || logResult('Part 2 test 1', await part2(loadLines('10_Pipe_Maze/sampleData3.txt')), 8)) {
         global.logExectionTime();
 
         global.startExecution();
@@ -31,7 +32,7 @@ export default async function main() {
             global.logExectionTime();
 
             global.startExecution();
-            logResult('Part 2', await part1(loadLines('10_Pipe_Maze/input.txt')))
+            logResult('Part 2', await part2(loadLines('10_Pipe_Maze/input.txt')))
         }
     }
     global.logExectionTime();
@@ -42,7 +43,6 @@ type Pos = { l: number, c: number };
 async function part1(data: string[], maze: Pos[] = []): Promise<number> {
     const start = findStart(data);
     const connected = startLeadsTo(data, start);
-
 
     let p1 = start;
     let p2 = start;
@@ -76,6 +76,17 @@ async function part1(data: string[], maze: Pos[] = []): Promise<number> {
 async function part2(data: string[]): Promise<number> {
     const maze: Pos[] = [];
     part1(data, maze);
+
+    const graphics = [];
+    for (let l = 0; l < data.length; l++) {
+        graphics[l] = "";
+        for (let c = 0; c < data[l].length; c++) {
+            graphics[l] += maze.some(x => x.l === l && x.c === c) ? data[l][c] : " ";
+        }
+    }
+    const graphicsS = graphics.join('\n').split('|').join('║').split('-').join('═').split('L').join('╚').split('J').join('╝').split('7').join('╗').split('F').join('╔');
+
+    fs.writeFileSync('10_Pipe_Maze/maze.txt', graphicsS);
 
     const prev: Pos[] = [];
     for (const pos of maze) {
