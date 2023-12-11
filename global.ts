@@ -51,3 +51,19 @@ function parseDuration(duration: number) {
         return `${duration}ms`;
     }
 }
+
+type Entry = [name: string, ((path: string[], ...extra: any[]) => number | Promise<number>), path: string, expectedResult: number | null, ...extra: any[]];
+export async function run(dayPath: string, entries: (Entry | null)[]) {
+    for (let entry of entries) {
+        if (entry === null) {
+            log();
+            continue;
+        }
+        startExecution();
+        const [name, fn, path, expected, ...extra] = entry;
+        const result = await fn(loadLines(dayPath + '/' + path), ...extra);
+
+        logResult(name, result, expected === null ? undefined : expected);
+        logExectionTime();
+    }
+}

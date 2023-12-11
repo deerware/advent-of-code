@@ -6,30 +6,14 @@ import * as global from '../global';
 export default async function main() {
     log("Day 11: Cosmic Expansion");
 
-    global.startExecution();
-    if (logResult('Part 1 test', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt')), 374)) {
-        global.logExectionTime();
-
-        global.startExecution();
-        logResult('Part 1', await part0(loadLines('11_Cosmic_Expansion/input.txt')), 9274989)
-    }
-    global.logExectionTime();
-
-    log();
-
-    global.startExecution();
-    if (logResult('Part 2 test 1', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt'), 10), 1030)) {
-        global.logExectionTime();
-
-        global.startExecution();
-        if (logResult('Part 2 test 2', await part0(loadLines('11_Cosmic_Expansion/sampleData1.txt'), 100), 8410)) {
-            global.logExectionTime();
-
-            global.startExecution();
-            logResult('Part 2', await part0(loadLines('11_Cosmic_Expansion/input.txt'), 1000000), 357134560737)
-        }
-    }
-    global.logExectionTime();
+    global.run('11_Cosmic_Expansion', [
+        ['Part 1 test 1', part0, 'sampleData1.txt', 374],
+        ['Part 1', part0, 'input.txt', 9274989],
+        null,
+        ['Part 2 test 1', part0, 'sampleData1.txt', 1030, 10],
+        ['Part 2 test 2', part0, 'sampleData1.txt', 8410, 100],
+        ['Part 2', part0, 'input.txt', 357134560737, 1000000],
+    ]);
 }
 
 function part0(data: string[], increaseBy = 2) {
