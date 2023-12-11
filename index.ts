@@ -8,6 +8,7 @@ import camelcards from './07_Camel_Cards/camelcards';
 import hauntedWasteland from './08_Haunted_Wasteland/hauntedwasteland';
 import miragemaintenance from './09_Mirage_Maintenance/miragemaintenance';
 import pipemaze from './10_Pipe_Maze/pipemaze';
+import cosmicexpansion from './11_Cosmic_Expansion/cosmicexpansion';
 import log from './log';
 
 (async () => {
@@ -16,12 +17,13 @@ import log from './log';
         // await cube_conundrum();
         // await gear_ratios();
         // await scratchcards();
-        await seedfertilizer();
+        // await seedfertilizer();
         // await waitforit();
         // await camelcards();
         // await hauntedWasteland();
         // await miragemaintenance();
         // await pipemaze();
+        await cosmicexpansion();
     } catch (e) {
         log('Error:', (e as any).message);
     }
