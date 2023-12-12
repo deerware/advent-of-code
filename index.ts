@@ -9,6 +9,7 @@ import hauntedWasteland from './08_Haunted_Wasteland/hauntedwasteland';
 import miragemaintenance from './09_Mirage_Maintenance/miragemaintenance';
 import pipemaze from './10_Pipe_Maze/pipemaze';
 import cosmicexpansion from './11_Cosmic_Expansion/cosmicexpansion';
+import hotsprings from './12_Hot_Springs/hotsprings';
 import log from './log';
 
 (async () => {
@@ -23,7 +24,8 @@ import log from './log';
         // await hauntedWasteland();
         // await miragemaintenance();
         // await pipemaze();
-        await cosmicexpansion();
+        // await cosmicexpansion();
+        await hotsprings();
     } catch (e) {
         log('Error:', (e as any).message);
     }
