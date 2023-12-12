@@ -63,7 +63,11 @@ export async function run(dayPath: string, entries: (Entry | null)[]) {
         const [name, fn, path, expected, ...extra] = entry;
         const result = await fn(loadLines(dayPath + '/' + path), ...extra);
 
-        logResult(name, result, expected === null ? undefined : expected);
+        const success = logResult(name, result, expected === null ? undefined : expected);
         logExectionTime();
+        if (!success) {
+            log(colors.fg.gray + 'Attempt unsuccessful.');
+            break;
+        }
     }
 }
