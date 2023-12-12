@@ -9,32 +9,37 @@ export default async function main() {
         ['Part 1 test 1', part1, 'sampleData1.txt', 21],
         ['Part 1', part1, 'input.txt', 7251],
         null,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
+        ['Part 2 test 1', part2, 'sampleData1.txt', 525152],
         ['Part 2', part2, 'input.txt', null],
     ]);
 }
 
 async function part1(data: string[]): Promise<number> {
     const lines = parseData(data);
-    const combinations = [];
+    let combinations = 0
     for (const line of lines) {
-        combinations.push(...getCombinations(line).filter(x => validateCombination(x, line.control)));
+        combinations += getCombinations(line);
     }
-    return combinations.length;
+    return combinations;
 }
 
 async function part2(data: string[]): Promise<number> {
-    return -Infinity;
+    const lines = parseData(data, 5);
+    let combinations = 0
+    for (const line of lines) {
+        combinations += getCombinations(line);
+    }
+    return combinations;
 }
 
 type Line = { data: string, control: number[] };
 
-function parseData(data: string[]) {
+function parseData(data: string[], folds = 1) {
     const lines: Line[] = [];
     for (const line of data) {
         lines.push({
-            data: line.split(' ')[0],
-            control: line.split(' ')[1].split(',').map(n => parseInt(n)),
+            data: line.split(' ')[0].repeat(folds),
+            control: line.split(' ')[1].repeat(folds).split(',').map(n => parseInt(n)),
         });
     }
     return lines;
@@ -42,15 +47,21 @@ function parseData(data: string[]) {
 
 function getCombinations(line: Line) {
     const count = line.data.split('?').length - 1;
-    const combinations = [];
-    for (let i = 0; i < Math.pow(2, count); i++) {
+    let combinations = 0;
+    // log(`Getting combinations for line: ${line.data}`);
+    const max = Math.pow(2, count);
+    for (let i = 0; i < max; i++) {
         const key = i.toString(2).padStart(count, '0');
 
         let data = line.data;
         for (let j = 0; j < key.length; j++) {
             data = data.replace('?', key[j] == '0' ? '.' : '#');
         }
-        combinations.push(data);
+        if (validateCombination(data, line.control))
+            combinations++;
+
+        if (i % 1000000 == 0)
+            // log(`${i} / ${max} (${Math.round(100 / max * i)} %)`);
     }
     return combinations;
 }
