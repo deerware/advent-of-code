@@ -32,15 +32,19 @@ async function part2(data: string[]): Promise<number> {
     return combinations;
 }
 
-type Line = { data: string, control: number[] };
+type Line = { data: string, control: number[], missing: number };
 
 function parseData(data: string[], folds = 1) {
     const lines: Line[] = [];
     for (const line of data) {
-        lines.push({
-            data: line.split(' ')[0].repeat(folds),
+        const newLine = {
+            data: ((line.split(' ')[0] + '?').repeat(folds)),
             control: line.split(' ')[1].repeat(folds).split(',').map(n => parseInt(n)),
-        });
+            missing: 0,
+        };
+        newLine.data = newLine.data.substring(0, newLine.data.length - 1)
+        newLine.missing = newLine.control.reduce((a, b) => a + b, 0) - newLine.data.split('#').length + 1;
+        lines.push(newLine);
     }
     return lines;
 }
@@ -48,10 +52,13 @@ function parseData(data: string[], folds = 1) {
 function getCombinations(line: Line) {
     const count = line.data.split('?').length - 1;
     let combinations = 0;
-    // log(`Getting combinations for line: ${line.data}`);
+    log(`Getting combinations for line: ${line.data}`);
     const max = Math.pow(2, count);
     for (let i = 0; i < max; i++) {
         const key = i.toString(2).padStart(count, '0');
+
+        if (key.split('1').length - 1 != line.missing)
+            continue;
 
         let data = line.data;
         for (let j = 0; j < key.length; j++) {
@@ -60,8 +67,8 @@ function getCombinations(line: Line) {
         if (validateCombination(data, line.control))
             combinations++;
 
-        if (i % 1000000 == 0)
-            // log(`${i} / ${max} (${Math.round(100 / max * i)} %)`);
+        // if (i % 1000000 == 0)
+        // log(`${i} / ${max} (${Math.round(100 / max * i)} %)`);
     }
     return combinations;
 }

@@ -25,7 +25,7 @@ import log from './log';
         // await miragemaintenance();
         // await pipemaze();
         // await cosmicexpansion();
-        // await hotsprings();
+        await hotsprings();
     } catch (e) {
         log('Error:', (e as any).message);
     }
