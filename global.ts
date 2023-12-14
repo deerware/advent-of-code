@@ -61,12 +61,17 @@ export async function run(dayPath: string, entries: (Entry | null)[]) {
         }
         startExecution();
         const [name, fn, path, expected, ...extra] = entry;
-        const result = await fn(loadLines(dayPath + '/' + path), ...extra);
-
-        const success = logResult(name, result, expected === null ? undefined : expected);
-        logExectionTime();
-        if (!success) {
-            log(colors.fg.gray + 'Attempt unsuccessful.');
+        try {
+            const result = await fn(loadLines(dayPath + '/' + path), ...extra);
+            const success = logResult(name, result, expected === null ? undefined : expected);
+            logExectionTime();
+            if (!success) {
+                log(colors.fg.gray + 'Attempt unsuccessful.');
+                break;
+            }
+        } catch (e) {
+            log(colors.fg.red + `${name}: ERROR !== ${expected} PASS`);
+            logExectionTime();
             break;
         }
     }
