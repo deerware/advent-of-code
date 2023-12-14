@@ -10,20 +10,28 @@ export default async function main() {
         ['Part 1', part1, 'input.txt', 41859],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 400],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 30842],
     ]);
 }
 
 async function part1(data: string[]): Promise<number> {
+    return part0(data, false);
+}
+
+async function part2(data: string[]): Promise<number> {
+    return part0(data, true);
+}
+
+async function part0(data: string[], allowOneMistake: boolean): Promise<number> {
     const images = getImages(data);
 
     let sum = 0;
     let i = 0;
     for (const image of images) {
         i++;
-        let count = findSymmetry(image.lines);
+        let count = findSymmetry(image.lines, allowOneMistake);
         if (count === null)
-            count = findSymmetry(image.cols);
+            count = findSymmetry(image.cols, allowOneMistake);
         else
             count *= 100;
 
@@ -34,10 +42,6 @@ async function part1(data: string[]): Promise<number> {
     }
 
     return sum;
-}
-
-async function part2(data: string[]): Promise<number> {
-    return -Infinity;
 }
 
 type Image = { lines: string[], cols: string[] };
@@ -71,7 +75,7 @@ function getImages(data: string[]) {
     return images;
 }
 
-function findSymmetry(data: string[]) {
+function findSymmetry(data: string[], allowOneMistake: boolean) {
     const startingPoint = Math.floor(data.length / 2);
     let point = startingPoint;
     let doBreak = 0;
@@ -88,25 +92,44 @@ function findSymmetry(data: string[]) {
         if (doBreak >= 2)
             break;
 
-        if (checkSymmetry(data, point))
+        if (checkSymmetry(data, point, allowOneMistake))
             return point;
     }
 
     return null;
 }
 
-function checkSymmetry(data: string[], point: number) {
+function checkSymmetry(data: string[], point: number, allowOneMistake: boolean) {
     if (point <= 0 || point > data.length - 1)
         return false;
+
+    const mustBeOneMistake = allowOneMistake;
+    const areEqual: ((l: string, r: string) => boolean) = allowOneMistake ? (l, r) => {
+        if (l === r)
+            return true;
+        if (!allowOneMistake)
+            return false;
+
+        let errFound = false;
+        for (let i = 0; i < l.length; i++)
+            if (l[i] !== r[i])
+                if (errFound)
+                    return false;
+                else
+                    errFound = true;
+
+        allowOneMistake = false;
+        return true;
+    } : (l, r) => l === r;
 
     for (let i = 0; ; i++) {
         const l = point - i - 1;
         const r = point + i;
 
         if (l < 0 || r >= data.length)
-            return true;
+            return !mustBeOneMistake || (mustBeOneMistake && !allowOneMistake);
 
-        if (data[l] !== data[r])
+        if (!areEqual(data[l], data[r]))
             return false;
     }
 }
