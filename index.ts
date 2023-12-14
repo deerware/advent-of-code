@@ -11,6 +11,7 @@ import pipemaze from './10_Pipe_Maze/pipemaze';
 import cosmicexpansion from './11_Cosmic_Expansion/cosmicexpansion';
 import hotsprings from './12_Hot_Springs/hotsprings';
 import pointofincidence from './13_Point_of_Incidence/pointofincidence'
+import parabolicreflectordish from './14_Parabolic_Reflector_Dish/parabolicreflectordish';
 import log from './log';
 
 (async () => {
@@ -27,7 +28,8 @@ import log from './log';
         // await pipemaze();
         // await cosmicexpansion();
         // await hotsprings();
-        await pointofincidence();
+        // await pointofincidence();
+        await parabolicreflectordish();
     } catch (e) {
         log('Error:', (e as any).message);
     }
