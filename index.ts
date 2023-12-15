@@ -12,6 +12,7 @@ import cosmicexpansion from './11_Cosmic_Expansion/cosmicexpansion';
 import hotsprings from './12_Hot_Springs/hotsprings';
 import pointofincidence from './13_Point_of_Incidence/pointofincidence'
 import parabolicreflectordish from './14_Parabolic_Reflector_Dish/parabolicreflectordish';
+import lenslibrary from './15_Lens_Library/lenslibrary';
 import log from './log';
 
 (async () => {
@@ -29,7 +30,8 @@ import log from './log';
         // await cosmicexpansion();
         // await hotsprings();
         // await pointofincidence();
-        await parabolicreflectordish();
+        // await parabolicreflectordish();
+        await lenslibrary();
     } catch (e) {
         log('Error:', (e as any).message);
     }
