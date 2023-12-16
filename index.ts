@@ -13,6 +13,7 @@ import hotsprings from './12_Hot_Springs/hotsprings';
 import pointofincidence from './13_Point_of_Incidence/pointofincidence'
 import parabolicreflectordish from './14_Parabolic_Reflector_Dish/parabolicreflectordish';
 import lenslibrary from './15_Lens_Library/lenslibrary';
+import thefloorwillbelava from './16_The_Floor_Will_Be_Lava/thefloorwillbelava';
 import log from './log';
 
 (async () => {
@@ -31,7 +32,8 @@ import log from './log';
         // await hotsprings();
         // await pointofincidence();
         // await parabolicreflectordish();
-        await lenslibrary();
+        // await lenslibrary();
+        await thefloorwillbelava();
     } catch (e) {
         log('Error:', (e as any).message);
     }

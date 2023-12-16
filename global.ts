@@ -4,6 +4,32 @@ import log from './log';
 
 let startDate: Date;
 
+type Entry = [name: string, ((path: string[], ...extra: any[]) => number | Promise<number>), path: string, expected: number | ((result: number) => boolean) | null, ...extra: any[]];
+export async function run(dayPath: string, entries: (Entry | null)[]) {
+    for (let entry of entries) {
+        if (entry === null) {
+            log();
+            continue;
+        }
+        startExecution();
+        const [name, fn, path, expected, ...extra] = entry;
+        try {
+            const result = await fn(loadLines(dayPath + '/' + path), ...extra);
+            const success = logResult(name, result, expected === null ? undefined : expected);
+            logExectionTime();
+            if (!success) {
+                log(colors.fg.gray + 'Attempt unsuccessful.');
+                break;
+            }
+        } catch (e: any) {
+            log(colors.fg.red + `${name}: ERROR !== ${expected} PASS`);
+            log(colors.fg.gray + e.message);
+            logExectionTime();
+            break;
+        }
+    }
+}
+
 export function logResult(title: string, result: number, expected?: number | ((n: number) => boolean)) {
     const pass = (typeof expected === 'function') ? expected(result) : result === expected;
 
@@ -19,12 +45,12 @@ export function startExecution() {
     startDate = new Date();
 }
 
-export function logExectionTime() {
-    log(colors.fg.gray + `Executed in ${getExecutionTime()}`);
-}
-
 export function getExecutionTime() {
     return `${(parseDuration(new Date().getTime() - startDate.getTime()))}`;
+}
+
+export function logExectionTime() {
+    log(colors.fg.gray + `Executed in ${getExecutionTime()}`);
 }
 
 export function loadLines(path: string) {
@@ -49,30 +75,5 @@ function parseDuration(duration: number) {
         return `${seconds}s`;
     } else {
         return `${duration}ms`;
-    }
-}
-
-type Entry = [name: string, ((path: string[], ...extra: any[]) => number | Promise<number>), path: string, expectedResult: number | null, ...extra: any[]];
-export async function run(dayPath: string, entries: (Entry | null)[]) {
-    for (let entry of entries) {
-        if (entry === null) {
-            log();
-            continue;
-        }
-        startExecution();
-        const [name, fn, path, expected, ...extra] = entry;
-        try {
-            const result = await fn(loadLines(dayPath + '/' + path), ...extra);
-            const success = logResult(name, result, expected === null ? undefined : expected);
-            logExectionTime();
-            if (!success) {
-                log(colors.fg.gray + 'Attempt unsuccessful.');
-                break;
-            }
-        } catch (e) {
-            log(colors.fg.red + `${name}: ERROR !== ${expected} PASS`);
-            logExectionTime();
-            break;
-        }
     }
 }
