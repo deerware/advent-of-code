@@ -14,6 +14,7 @@ import pointofincidence from './13_Point_of_Incidence/pointofincidence'
 import parabolicreflectordish from './14_Parabolic_Reflector_Dish/parabolicreflectordish';
 import lenslibrary from './15_Lens_Library/lenslibrary';
 import thefloorwillbelava from './16_The_Floor_Will_Be_Lava/thefloorwillbelava';
+import clumsycrucible from './17_Clumsy_Crucible/clumsycrucible';
 import log from './log';
 
 (async () => {
@@ -33,7 +34,8 @@ import log from './log';
         // await pointofincidence();
         // await parabolicreflectordish();
         // await lenslibrary();
-        await thefloorwillbelava();
+        // await thefloorwillbelava();
+        await clumsycrucible();
     } catch (e) {
         log('Error:', (e as any).message);
     }
