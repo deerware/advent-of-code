@@ -5,11 +5,15 @@ import log from './log';
 let startDate: Date;
 
 type Entry = [name: string, ((path: string[], ...extra: any[]) => number | Promise<number>), path: string, expected: number | ((result: number) => boolean) | null, ...extra: any[]];
-export async function run(dayPath: string, entries: (Entry | null)[]) {
+export async function run(dayPath: string, entries: (Entry | null | false)[]) {
     for (let entry of entries) {
         if (entry === null) {
             log();
             continue;
+        }
+        if (entry === false) {
+            log(colors.fg.gray + 'Break');
+            break;
         }
         startExecution();
         const [name, fn, path, expected, ...extra] = entry;
