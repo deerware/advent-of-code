@@ -7,9 +7,8 @@ export default async function main() {
 
     global.run('17_Clumsy_Crucible', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 102],
-        false,
+        // false,
         ['Part 1', part1, 'input.txt', (n) => n < 982],
-        false,
         null,
         ['Part 2 test 1', part2, 'sampleData2.txt', 0],
         ['Part 2', part2, 'input.txt', null],
@@ -183,7 +182,7 @@ function getPathTile(grid: number[][], endPos: Pos, prevTile: PathTile, newPos: 
     // const Hcost = Math.abs(endPos.l - newPos.l) + Math.abs(endPos.c - newPos.c)
     const Tcost = prevTile.Tcost + grid[newPos.l][newPos.c];// * 10;
     // const Fcost = Tcost; //Gcost + Hcost + Tcost;
-    const sameDirDir = prevTile.pos.l === newPos.l ? 'L' : 'C';
+    // const sameDirDir = prevTile.pos.l === newPos.l ? 'L' : 'C';
     const currentDir = getDir(newPos, prevTile.pos)
 
     return {
