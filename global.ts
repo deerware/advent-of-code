@@ -12,7 +12,7 @@ export async function run(dayPath: string, entries: (Entry | null | false)[]) {
             continue;
         }
         if (entry === false) {
-            log(colors.fg.gray + 'Break');
+            log(colors.fg.gray, 'Break');
             break;
         }
         startExecution();
@@ -22,12 +22,12 @@ export async function run(dayPath: string, entries: (Entry | null | false)[]) {
             const success = logResult(name, result, expected === null ? undefined : expected);
             logExectionTime();
             if (!success) {
-                log(colors.fg.gray + 'Attempt unsuccessful.');
+                log(colors.fg.gray, 'Attempt unsuccessful.');
                 break;
             }
         } catch (e: any) {
-            log(colors.fg.red + `${name}: ERROR !== ${expected} PASS`);
-            log(colors.fg.gray + e.message);
+            log(colors.fg.red, `${name}: <ERROR> !== ${expected} FAIL`);
+            log(colors.fg.gray, e.message);
             logExectionTime();
             break;
         }
@@ -38,9 +38,9 @@ export function logResult(title: string, result: number, expected?: number | ((n
     const pass = (typeof expected === 'function') ? expected(result) : result === expected;
 
     if (expected !== undefined)
-        log((pass ? colors.fg.green : colors.fg.red) + `${title}: ${result} ${pass ? '===' : '!=='} ${expected} ${pass ? "PASS" : "FAIL"}`);
+        log(pass ? colors.fg.green : colors.fg.red, `${title}: ${result} ${pass ? '===' : '!=='} ${expected} ${pass ? "PASS" : "FAIL"}`);
     else
-        log(colors.fg.yellow + `${title}: ${result}`);
+        log(colors.fg.yellow, `${title}: ${result}`);
 
     return pass || expected === undefined;
 }
@@ -54,7 +54,7 @@ export function getExecutionTime() {
 }
 
 export function logExectionTime() {
-    log(colors.fg.gray + `Executed in ${getExecutionTime()}`);
+    log(colors.fg.gray, `Executed in ${getExecutionTime()}`);
 }
 
 export function loadLines(path: string) {

@@ -10,5 +10,8 @@
   "private": true,
   "devDependencies": {
     "@types/node": "^20.10.2"
+  },
+  "dependencies": {
+    "tsconfig-paths": "^4.2.0"
   }
 }
