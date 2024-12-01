@@ -4,7 +4,8 @@
   "description": "Advent of code 2023",
   "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "getDay": "node ./build/getDay.js"
   },
   "author": "deerware Milan Jelínek",
   "private": true,
@@ -12,6 +13,8 @@
     "@types/node": "^20.10.2"
   },
   "dependencies": {
-    "tsconfig-paths": "^4.2.0"
+    "axios": "^1.7.8",
+    "tsconfig-paths": "^4.2.0",
+    "zod": "^3.23.8"
   }
 }
