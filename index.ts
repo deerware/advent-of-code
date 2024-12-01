@@ -1,9 +1,9 @@
+import historianhysteria from './2024/01_Historian_Hysteria/historianhysteria';
 import log from './log';
-import historianmysteria from './2024/01_Historian_Mysteria/historianmysteria';
 
 (async () => {
     try {
-        await historianmysteria();
+        await historianhysteria();
     } catch (e) {
         log('Error:', (e as any).message);
     }
