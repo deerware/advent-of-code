@@ -4,7 +4,14 @@ import log from './log';
 
 let startDate: Date;
 
-type Entry = [name: string, ((path: string[], ...extra: any[]) => number | Promise<number>), path: string, expected: number | ((result: number) => boolean) | null, ...extra: any[]];
+type Entry = [
+    name: string,
+    ((path: string[], ...extra: any[]) => number | Promise<number>),
+    path: string,
+    expected: number | ((result: number) => boolean) | null,
+    ...extra: any[]
+];
+
 export async function run(dayPath: string, entries: (Entry | null | false)[]) {
     for (let entry of entries) {
         if (entry === null) {
