@@ -5,12 +5,12 @@ import * as global from '../../global';
 export default async function main() {
     log('Day 1: Historian Hysteria');
 
-    global.run('2024/01_Historian_Mysteria', [
+    await global.run('2024/01_Historian_Hysteria', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 11],
-        ['Part 1', part1, 'input.txt', null],
+        ['Part 1', part1, 'input.txt', 1889772],
         null,
         ['Part 2 test 1', part2, 'sampleData2.txt', 31],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 23228917],
     ]);
 }
 
