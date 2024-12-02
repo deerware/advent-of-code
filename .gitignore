@@ -3,3 +3,4 @@ build
 res
 temp
 prisma/dev.db
+session.txt
