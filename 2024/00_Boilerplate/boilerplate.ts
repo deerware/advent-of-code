@@ -5,10 +5,10 @@ import * as global from '../../global';
 export default async function main() {
     log('');
 
-    global.run('2024/', [
+    await global.run('2024/', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 0],
         ['Part 1', part1, 'input.txt', null],
-        null,
+        false,
         ['Part 2 test 1', part2, 'sampleData2.txt', 0],
         ['Part 2', part2, 'input.txt', null],
     ]);
