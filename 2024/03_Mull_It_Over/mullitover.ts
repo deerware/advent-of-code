@@ -18,28 +18,25 @@ export default async function mullitover() {
 async function part1(_data: string[]): Promise<number> {
     const data = _data.join('\n');
 
-    let sum = 0;
-
-    for (const match of regex.allMatchesG(data, /mul\((\d{1,3}),(\d{1,3})\)/gm))
-        sum += parseInt(match.groups[0]) * parseInt(match.groups[1]);
-
-    return sum;
+    return regex
+        .allMatchesG(data, /mul\((\d{1,3}),(\d{1,3})\)/gm)
+        .reduce((sum, match) =>
+            sum + parseInt(match.groups[0]) * parseInt(match.groups[1]), 0);
 }
 
 async function part2(_data: string[]): Promise<number> {
     const data = _data.join('\n');
 
-    let sum = 0;
-    let enabled = true;
+    return regex
+        .allMatchesG(data, /(do)\(\)|(don't)\(\)|(mul)\((\d{1,3}),(\d{1,3})\)/gm)
+        .reduce((acc, match) => {
+            if (match.groups[0] === 'do')
+                return { ...acc, enabled: true };
+            if (match.groups[1] === "don't")
+                return { ...acc, enabled: true };
+            if (match.groups[2] === 'mul' && acc.enabled)
+                return { ...acc, sum: acc.sum + (parseInt(match.groups[3]) * parseInt(match.groups[4])) }
 
-    for (const match of regex.allMatchesG(data, /(do)\(\)|(don't)\(\)|(mul)\((\d{1,3}),(\d{1,3})\)/gm)) {
-        if (match.groups[0] === 'do')
-            enabled = true;
-        if (match.groups[1] === "don't")
-            enabled = false;
-        if (match.groups[2] === 'mul' && enabled)
-            sum += parseInt(match.groups[3]) * parseInt(match.groups[4]);
-    }
-
-    return sum;
+            return acc;
+        }, { sum: 0, enabled: true }).sum;
 }
