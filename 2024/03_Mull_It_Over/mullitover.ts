@@ -33,7 +33,7 @@ async function part2(_data: string[]): Promise<number> {
             if (match.groups[0] === 'do')
                 return { ...acc, enabled: true };
             if (match.groups[1] === "don't")
-                return { ...acc, enabled: true };
+                return { ...acc, enabled: false };
             if (match.groups[2] === 'mul' && acc.enabled)
                 return { ...acc, sum: acc.sum + (parseInt(match.groups[3]) * parseInt(match.groups[4])) }
 
