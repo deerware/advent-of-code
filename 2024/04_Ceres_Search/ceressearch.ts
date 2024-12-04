@@ -10,24 +10,20 @@ export default async function ceressearch() {
         ['Part 1 test 1', part1, 'sampleData.txt', 18],
         ['Part 1 test 2', part1, 'sampleData1.txt', 18],
         ['Part 1', part1, 'input.txt', 2464],
-        false,
+        null,
         ['Part 2 test 1', part2, 'sampleData2.txt', 9],
         ['Part 2 test 2', part2, 'sampleData.txt', 9],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 1982],
     ]);
 }
 
 async function part1(data: string[]): Promise<number> {
     let sum = 0;
-    for (let row = 0; row < data.length; row++) {
-        for (let col = 0; col < data[row].length; col++) {
-            if (data[row][col] === 'X') {
-                const dir = scan1(data, row, col);
-                if (dir.length > 0)
-                    sum += dir.length;
-            }
-        }
-    }
+    for (let row = 0; row < data.length; row++)
+        for (let col = 0; col < data[row].length; col++)
+            if (data[row][col] === 'X')
+                sum += scan1(data, row, col).length;
+
     return sum;
 }
 
@@ -78,17 +74,36 @@ function scan1(data: string[], row: number, col: number): DIR[] {
 
 async function part2(data: string[]): Promise<number> {
     let sum = 0;
-    for (let row = 0; row < data.length; row++) {
-        for (let col = 0; col < data[row].length; col++) {
-            if (data[row][col] === 'A') {
+    for (let row = 1; row < data.length - 1; row++)
+        for (let col = 1; col < data[row].length - 1; col++)
+            if (data[row][col] === 'A')
                 if (scan2(data, row, col))
                     sum++;
-            }
-        }
-    }
+
     return sum;
 }
 
+
 function scan2(data: string[], row: number, col: number): boolean {
+    // M.S
+    // .A.
+    // M.S
+
+    const tl = data[row - 1][col - 1];
+    const tr = data[row - 1][col + 1];
+    if (
+        (tl === 'M' || tl === 'S') &&
+        (tr == 'M' || tr == 'S')
+    ) {
+        const ebl = tr === 'M' ? 'S' : 'M';
+        const ebr = tl === 'M' ? 'S' : 'M';
+
+        if (
+            data[row + 1][col - 1] === ebl &&
+            data[row + 1][col + 1] === ebr
+        )
+            return true;
+    }
+
     return false;
 }
