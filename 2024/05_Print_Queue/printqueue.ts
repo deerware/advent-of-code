@@ -14,8 +14,10 @@ export default async function printqueue() {
     ]);
 }
 
+type Rule = [no: number, mustBeBefore: number];
+
 function parseData(data: string[]) {
-    const rules: [number, number][] = [];
+    const rules: Rule[] = [];
     const updates: number[][] = [];
     let reachedUpdates = false;
 
@@ -25,11 +27,10 @@ function parseData(data: string[]) {
             continue;
         }
 
-        if (!reachedUpdates) {
+        if (!reachedUpdates)
             rules.push(line.split('|').map(x => parseInt(x)) as [first: number, second: number]);
-        } else {
+        else
             updates.push(line.split(',').map(x => parseInt(x)));
-        }
     }
 
     return { rules, updates };
@@ -40,7 +41,7 @@ async function part1(_data: string[]): Promise<number> {
 
     return data.updates
         .filter(update => isValid(update, data.rules))
-        .reduce((acc, val) => acc += val[(val.length - 1) / 2], 0);
+        .reduce(reduceToMiddle, 0);
 }
 
 async function part2(_data: string[]): Promise<number> {
@@ -55,24 +56,22 @@ async function part2(_data: string[]): Promise<number> {
     for (const update of invalidUpdates) {
         while (!isValid(update, data.rules)) {
             for (const n of update) {
-                const rules = data.rules.filter(([first, second]) => n == first);
+                const rules = data.rules.filter(([no]) => n == no);
                 for (const rule of rules) {
-                    if (!update.includes(rule[1]))
-                        continue;
-
                     const currPos = update.indexOf(rule[0]);
                     const mustBeBeforePos = update.indexOf(rule[1]);
-                    if (currPos > mustBeBeforePos)
+                    if (mustBeBeforePos > -1 && currPos > mustBeBeforePos)
                         move(update, currPos, mustBeBeforePos);
                 }
             }
         }
     }
 
-    return invalidUpdates.reduce((acc, val) => acc += val[(val.length - 1) / 2], 0);
+    return invalidUpdates
+        .reduce(reduceToMiddle, 0);
 }
 
-function isValid(update: number[], allRules: [number, number][]) {
+function isValid(update: number[], allRules: Rule[]) {
     for (const n of update) {
         const rules = allRules.filter(([first, second]) => n == first);
         if (rules.length === 0)
@@ -82,16 +81,20 @@ function isValid(update: number[], allRules: [number, number][]) {
             if (!update.includes(rule[1]))
                 continue;
 
-            if (update.indexOf(rule[1]) < update.indexOf(rule[0])) {
+            if (update.indexOf(rule[1]) < update.indexOf(rule[0]))
                 return false;
-            }
         }
     }
 
     return true;
 }
 
+// https://dev.to/jalal246/moving-element-in-an-array-from-index-to-another-464b
 function move<T>(input: T[], from: number, to: number) {
     const elm = input.splice(from, 1)[0];
     input.splice(to, 0, elm);
+}
+
+function reduceToMiddle(acc: number, val: number[]) {
+    return acc + val[(val.length - 1) / 2];
 }
