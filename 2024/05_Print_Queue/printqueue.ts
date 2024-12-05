@@ -11,10 +11,11 @@ export default async function printqueue() {
         null,
         ['Part 2 test 1', part2, 'sampleData.txt', 123],
         ['Part 2', part2, 'input.txt', 4121],
-    ]);
+    ], parseData);
 }
 
 type Rule = [no: number, mustBeBefore: number];
+type Data = ReturnType<typeof parseData>;
 
 function parseData(data: string[]) {
     const rules: Rule[] = [];
@@ -36,16 +37,13 @@ function parseData(data: string[]) {
     return { rules, updates };
 }
 
-async function part1(_data: string[]): Promise<number> {
-    const data = parseData(_data);
-
+async function part1(data: Data): Promise<number> {
     return data.updates
         .filter(update => isValid(update, data.rules))
         .reduce(reduceToMiddle, 0);
 }
 
-async function part2(_data: string[]): Promise<number> {
-    const data = parseData(_data);
+async function part2(data: Data): Promise<number> {
     const invalidUpdates = [];
 
     for (const update of data.updates) {
@@ -58,8 +56,7 @@ async function part2(_data: string[]): Promise<number> {
             for (const n of update) {
                 const rules = data.rules.filter(([no]) => n == no);
                 for (const rule of rules) {
-                    const currPos = update.indexOf(rule[0]);
-                    const mustBeBeforePos = update.indexOf(rule[1]);
+                    const [currPos, mustBeBeforePos] = rule.map(n => update.indexOf(n));
                     if (mustBeBeforePos > -1 && currPos > mustBeBeforePos)
                         move(update, currPos, mustBeBeforePos);
                 }
