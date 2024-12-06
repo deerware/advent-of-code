@@ -1,17 +1,33 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
+import { Worker, isMainThread, parentPort } from 'worker_threads';
+import { z } from 'zod';
+
+if (!isMainThread)
+    guardgallivant();
 
 export default async function guardgallivant() {
-    log('Day 6: Guard Gallivant');
+    if (isMainThread) {
+        log('Day 6: Guard Gallivant');
 
-    await global.run('2024/06_Guard_Gallivant', [
-        ['Part 1 test 1', part1, 'sampleData.txt', 41],
-        ['Part 1', part1, 'input.txt', 5305],
-        null,
-        ['Part 2 test 1', part2, 'sampleData.txt', 6],
-        ['Part 2', part2, 'input.txt', 2143],
-    ], parseData);
+        await global.run('2024/06_Guard_Gallivant', [
+            ['Part 1 test 1', part1, 'sampleData.txt', 41],
+            ['Part 1', part1, 'input.txt', 5305],
+            null,
+            ['Part 2 test 1', part2, 'sampleData.txt', 6],
+            ['Part 2', part2, 'input.txt', 2143],
+        ], parseData);
+    } else {
+        parentPort!.once('message', (_message) => {
+            const message = z.object({
+                data: z.any(),
+                startAt: z.number(),
+                take: z.number(),
+            }).parse(_message);
+            part2Worker(message.data, message.startAt, message.take);
+        });
+    }
 }
 
 enum DIR {
@@ -73,30 +89,41 @@ async function part1(data: Data, forPart2 = false): Promise<number | boolean> {
 }
 
 async function part2(data: ReturnType<typeof parseData>): Promise<number> {
-    part1(data);
+    await part1(data);
 
+    let workers: Promise<number>[] = [];
+
+    for (let i = 0; i < data.visited.length; i += 500) {
+        workers.push(new Promise(resolve => {
+            const worker = new Worker(__filename);
+            worker.once('message', (_message) => {
+                const message = z.object({
+                    loops: z.number(),
+                }).parse(_message);
+                resolve(message.loops);
+            });
+            worker.once('error', (error) => {
+                throw error;
+            });
+            worker.postMessage({ data, startAt: i, take: 500 });
+        }));
+    }
+
+    return Promise.all(workers).then(loops => loops.reduce((a, b) => a + b, 0));
+}
+
+async function part2Worker(data: Data, startAt: number, take: number) {
     let loops = 0;
-    let i = 0;
-
-    for (const visited of data.visited) {
-        i++;
-        let cl = false;
+    const stopAt = startAt + take;
+    for (let i = startAt; i < stopAt && i < data.visited.length; i++) {
+        const visited = data.visited[i];
         const currentData = { ...data, obstacles: data.obstacles.concat(visited), pos: data.startingPos, dir: DIR.UP, visited: [], visitedDir: [] };
 
         if (visited.r !== data.startingPos.r || visited.c !== data.startingPos.c)
             if (await part1(currentData, true))
-                (cl = true, loops++);
-
-        if (i % 500 === 0)
-            console.log(`${i}/${data.visited.length}: ${loops}`);
-
-        // renderData(currentData, cl);
-        // console.log('Loops: ' + loops);
-
-        // await new Promise(r => setTimeout(r, cl ? 2000 : 500));
+                loops++;
     }
-
-    return loops;
+    parentPort!.postMessage({ loops });
 }
 
 function move(data: Data) {
@@ -126,23 +153,5 @@ function nextPos(data: Data) {
             return { r: r + 1, c };
         case DIR.LEFT:
             return { r, c: c - 1 };
-    }
-}
-
-function renderData(data: Data, loop = false) {
-    console.log('----');
-    for (let r = 0; r < data.height; r++) {
-        let row = '';
-        for (let c = 0; c < data.width; c++) {
-            if (data.startingPos.r === r && data.startingPos.c === c)
-                row += colors.bg.green + '##';
-            else if (data.obstacles.find(o => o.r === r && o.c === c))
-                row += colors.bg.red + '  ';
-            else if (data.visited.find(p => p.r === r && p.c === c))
-                row += (loop ? colors.bg.yellow : colors.bg.gray) + '  ';
-            else
-                row += colors.reset + '  ';
-        }
-        console.log(row);
     }
 }
