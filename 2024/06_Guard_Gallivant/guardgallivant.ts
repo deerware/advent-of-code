@@ -1,19 +1,10 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
-import { Worker, isMainThread, parentPort } from 'worker_threads';
 import { z } from 'zod';
+import WorkerWorker from '../../helpers/worker';
 
-if (!isMainThread) {
-    parentPort!.once('message', (_message) => {
-        const message = z.object({
-            data: z.any(),
-            startAt: z.number(),
-            take: z.number(),
-        }).parse(_message);
-        part2Worker(message.data, message.startAt, message.take);
-    });
-}
+const worker = new WorkerWorker(part2Worker);
 
 export default async function guardgallivant() {
     log('Day 6: Guard Gallivant');
@@ -88,39 +79,27 @@ async function part1(data: Data, forPart2 = false): Promise<number | boolean> {
 async function part2(data: ReturnType<typeof parseData>): Promise<number> {
     await part1(data);
 
-    let workers: Promise<number>[] = [];
+    let parts: Promise<number>[] = [];
 
-    for (let i = 0; i < data.visited.length; i += 500) {
-        workers.push(new Promise(resolve => {
-            const worker = new Worker(__filename);
-            worker.once('message', (_message) => {
-                const message = z.object({
-                    loops: z.number(),
-                }).parse(_message);
-                resolve(message.loops);
-            });
-            worker.once('error', (error) => {
-                throw error;
-            });
-            worker.postMessage({ data, startAt: i, take: 500 });
-        }));
-    }
+    for (let i = 0; i < data.visited.length; i += 500)
+        parts.push(worker.run({ data, startAt: i, take: 500 }, __filename));
 
-    return Promise.all(workers).then(loops => loops.reduce((a, b) => a + b, 0));
+    return Promise.all(parts).then(loops => loops.reduce((a, b) => a + b, 0));
 }
 
-async function part2Worker(data: Data, startAt: number, take: number) {
+async function part2Worker({ data, startAt, take }: { data: Data, startAt: number, take: number }) {
     let loops = 0;
     const stopAt = startAt + take;
     for (let i = startAt; i < stopAt && i < data.visited.length; i++) {
         const visited = data.visited[i];
         const currentData = { ...data, obstacles: data.obstacles.concat(visited), pos: data.startingPos, dir: DIR.UP, visited: [], visitedDir: [] };
 
-        if (visited.r !== data.startingPos.r || visited.c !== data.startingPos.c)
+        if (visited.r !== data.startingPos.r || visited.c !== data.startingPos.c) {
             if (await part1(currentData, true))
                 loops++;
+        }
     }
-    parentPort!.postMessage({ loops });
+    return loops;
 }
 
 function move(data: Data) {
