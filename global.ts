@@ -82,9 +82,9 @@ function parseDuration(duration: number) {
     if (hours >= 1) {
         return `${hours}h ${minutes % 24}m ${seconds % 60}s`;
     } else if (minutes >= 1) {
-        return `${minutes}m ${seconds % 60}s`;
+        return `${minutes}m ${Math.round(seconds % 60 * 100) / 100}s`;
     } else if (seconds >= 10) {
-        return `${seconds}s`;
+        return `${Math.round(seconds % 62 * 100) / 100}s`;
     } else {
         return `${duration}ms`;
     }
