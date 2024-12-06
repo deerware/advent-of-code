@@ -4,30 +4,27 @@ import * as global from '../../global';
 import { Worker, isMainThread, parentPort } from 'worker_threads';
 import { z } from 'zod';
 
-if (!isMainThread)
-    guardgallivant();
+if (!isMainThread) {
+    parentPort!.once('message', (_message) => {
+        const message = z.object({
+            data: z.any(),
+            startAt: z.number(),
+            take: z.number(),
+        }).parse(_message);
+        part2Worker(message.data, message.startAt, message.take);
+    });
+}
 
 export default async function guardgallivant() {
-    if (isMainThread) {
-        log('Day 6: Guard Gallivant');
+    log('Day 6: Guard Gallivant');
 
-        await global.run('2024/06_Guard_Gallivant', [
-            ['Part 1 test 1', part1, 'sampleData.txt', 41],
-            ['Part 1', part1, 'input.txt', 5305],
-            null,
-            ['Part 2 test 1', part2, 'sampleData.txt', 6],
-            ['Part 2', part2, 'input.txt', 2143],
-        ], parseData);
-    } else {
-        parentPort!.once('message', (_message) => {
-            const message = z.object({
-                data: z.any(),
-                startAt: z.number(),
-                take: z.number(),
-            }).parse(_message);
-            part2Worker(message.data, message.startAt, message.take);
-        });
-    }
+    await global.run('2024/06_Guard_Gallivant', [
+        ['Part 1 test 1', part1, 'sampleData.txt', 41],
+        ['Part 1', part1, 'input.txt', 5305],
+        null,
+        ['Part 2 test 1', part2, 'sampleData.txt', 6],
+        ['Part 2', part2, 'input.txt', 2143],
+    ], parseData);
 }
 
 enum DIR {
