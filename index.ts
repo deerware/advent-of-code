@@ -4,6 +4,7 @@ import mullitover from './2024/03_Mull_It_Over/mullitover';
 import ceressearch from './2024/04_Ceres_Search/ceressearch';
 import printqueue from './2024/05_Print_Queue/printqueue';
 import guardgallivant from './2024/06_Guard_Gallivant/guardgallivant';
+import bridgerepair from './2024/07_Bridge_Repair/bridgerepair';
 import log from './log';
 
 (async () => {
@@ -13,7 +14,8 @@ import log from './log';
         // await mullitover();
         // await ceressearch();
         // await printqueue();
-        await guardgallivant();
+        // await guardgallivant();
+        await bridgerepair();
     } catch (e) {
         log('Error:', (e as any).message);
     }
