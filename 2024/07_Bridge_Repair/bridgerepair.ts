@@ -7,10 +7,10 @@ export default async function bridgerepair() {
 
     await global.run('2024/07_Bridge_Repair', [
         ['Part 1 test 1', part1, 'sampleData.txt', 3749],
-        ['Part 1', part1, 'input.txt', null],
+        ['Part 1', part1, 'input.txt', 21572148763543],
         null,
         ['Part 2 test 1', part2, 'sampleData.txt', 11387],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 581941094529163],
     ], parseData);
 }
 
@@ -24,10 +24,23 @@ function parseData(_data: string[]) {
     return data;
 }
 
+enum PossibleOperators {
+    PART1 = 2,
+    PART2 = 3,
+}
+
 async function part1(data: Data): Promise<number> {
+    return process(data, PossibleOperators.PART1);
+}
+
+async function part2(data: Data): Promise<number> {
+    return process(data, PossibleOperators.PART2);
+}
+
+async function process(data: Data, possibOperators: PossibleOperators): Promise<number> {
     let passing = 0;
     for (const d of data) {
-        if (operatorsCombinations(d.parts.length - 1, (operators) => {
+        if (operatorsCombinations(d.parts.length - 1, possibOperators, (operators) => {
             let result = d.parts[0];
             for (let i = 0; i < operators.length; i++) {
                 if (operators[i] === Operators.ADD)
@@ -35,6 +48,9 @@ async function part1(data: Data): Promise<number> {
 
                 if (operators[i] === Operators.MUL)
                     result *= d.parts[i + 1];
+
+                if (operators[i] === Operators.CONC)
+                    result = parseInt(result.toString() + d.parts[i + 1].toString());
             }
             return result === d.test;
         }))
@@ -43,29 +59,22 @@ async function part1(data: Data): Promise<number> {
     return passing;
 }
 
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
-}
-
 enum Operators {
     ADD,
-    MUL
+    MUL,
+    CONC,
 }
 
-function operatorsCombinations(count: number, callback: (operators: Operators[]) => boolean | void) {
-    const max = Math.pow(2, count);
+function operatorsCombinations(count: number, operatorsN: 2 | 3, callback: (operators: Operators[]) => boolean | void) {
+    const max = Math.pow(operatorsN, count);
 
     for (let i = 0; i < max; i++) {
-        const bin = dec2bin(i).padStart(count, '0');
-        const operators = bin.split('').map((v) => v === '0' ? Operators.ADD : Operators.MUL);
+        const bin = i.toString(operatorsN).padStart(count, '0');
+        const operators = bin.split('').map((v) => v === '0' ? Operators.ADD : v === '1' ? Operators.MUL : Operators.CONC);
 
         if (callback(operators) === true)
             return true;
     }
 
     return false;
-}
-
-function dec2bin(dec: number) {
-    return (dec).toString(2);
 }
