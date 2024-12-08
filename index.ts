@@ -5,6 +5,7 @@ import ceressearch from './2024/04_Ceres_Search/ceressearch';
 import printqueue from './2024/05_Print_Queue/printqueue';
 import guardgallivant from './2024/06_Guard_Gallivant/guardgallivant';
 import bridgerepair from './2024/07_Bridge_Repair/bridgerepair';
+import resonantcollinearity from './2024/08_Resonant_Collinearity/resonantcollinearity';
 import log from './log';
 
 (async () => {
@@ -15,7 +16,8 @@ import log from './log';
         // await ceressearch();
         // await printqueue();
         // await guardgallivant();
-        await bridgerepair();
+        // await bridgerepair();
+        await resonantcollinearity();
     } catch (e) {
         log('Error:', (e as any).message);
     }
