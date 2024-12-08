@@ -10,7 +10,7 @@ export default async function resonantcollinearity() {
         ['Part 1', part1, 'input.txt', 291],
         null,
         ['Part 2 test 1', part2, 'sampleData.txt', 34],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 1015],
     ], parseData);
 }
 
@@ -39,6 +39,14 @@ function parseData(data: string[]) {
 }
 
 async function part1(data: Data): Promise<number> {
+    return process(data);
+}
+
+async function part2(data: Data): Promise<number> {
+    return process(data, true);
+}
+
+async function process(data: Data, part2 = false) {
     let antinodes: Pos[] = [];
     for (const antenna in data.antennas) {
         const antennas = data.antennas[antenna];
@@ -47,47 +55,28 @@ async function part1(data: Data): Promise<number> {
 
         for (let i = 0; i < antennas.length; i++) {
             for (let j = i + 1; j < antennas.length; j++) {
+                const candidates: Pos[] = part2 ? [antennas[i], antennas[j]] : [];
                 const [r1, c1] = antennas[i];
                 const [r2, c2] = antennas[j];
                 const dr = r2 - r1;
                 const dc = c2 - c1;
 
-                const an1 = [r1 - dr, c1 - dc] as Pos;
-                const an2 = [r2 + dr, c2 + dc] as Pos;
+                for (let i = 1; part2 || i === 1; i++) {
+                    const an1 = [r1 - i * dr, c1 - i * dc] as Pos;
+                    const an2 = [r2 + i * dr, c2 + i * dc] as Pos;
+                    const an = [an1, an2].filter(a => a[0] >= 0 && a[0] < data.map.width && a[1] >= 0 && a[1] < data.map.height);
 
-                for (const an of [an1, an2]) {
-                    if (an[0] < 0 || an[0] >= data.map.width || an[1] < 0 || an[1] >= data.map.height)
-                        continue;
+                    if (an.length == 0)
+                        break;
 
-                    if (antinodes.find(a => a[0] == an[0] && a[1] == an[1]))
-                        continue;
-
-                    antinodes.push(an);
+                    candidates.push(...an);
                 }
+
+                for (const an of candidates)
+                    if (!antinodes.find(a => a[0] == an[0] && a[1] == an[1]))
+                        antinodes.push(an);
             }
         }
     }
-    // render(data, antinodes);
     return antinodes.length;
-}
-
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
-}
-
-function render(data: Data, antinodes: Pos[] = []) {
-    for (let r = 0; r < data.map.height; r++) {
-        let row = '';
-        for (let c = 0; c < data.map.width; c++) {
-            if (antinodes.find(a => a[0] == r && a[1] == c))
-                row += colors.bg.red;
-
-            if (Object.values(data.antennas).find(a => a.find(b => b[0] == r && b[1] == c)))
-                row += 'II' + colors.reset;
-            else
-                row += '  ' + colors.reset;
-
-        }
-        console.log(r.toString(16) + ' ' + row);
-    }
 }
