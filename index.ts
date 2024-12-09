@@ -6,6 +6,7 @@ import printqueue from './2024/05_Print_Queue/printqueue';
 import guardgallivant from './2024/06_Guard_Gallivant/guardgallivant';
 import bridgerepair from './2024/07_Bridge_Repair/bridgerepair';
 import resonantcollinearity from './2024/08_Resonant_Collinearity/resonantcollinearity';
+import diskfragmenter from './2024/09_Disk_Fragmenter/diskfragmenter';
 import log from './log';
 
 (async () => {
@@ -17,7 +18,8 @@ import log from './log';
         // await printqueue();
         // await guardgallivant();
         // await bridgerepair();
-        await resonantcollinearity();
+        // await resonantcollinearity();
+        await diskfragmenter();
     } catch (e) {
         log('Error:', (e as any).message);
     }
