@@ -11,9 +11,12 @@ export default async function hoofit() {
         // ['Part 1 pre-test 3', part1, 'sampleData3.txt', 3],
         ['Part 1 test 1', part1, 'sampleData4.txt', 36],
         ['Part 1', part1, 'input.txt', 550],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        null,
+        // ['Part 2 pre-test 1', part2, 'sampleData5.txt', 3],
+        // ['Part 2 pre-test 2', part2, 'sampleData6.txt', 13],
+        // ['Part 2 pre-test 3', part2, 'sampleData7.txt', 227],
+        ['Part 2 test 1', part2, 'sampleData8.txt', 81],
+        ['Part 2', part2, 'input.txt', 1255],
     ], parseData);
 }
 
@@ -44,10 +47,14 @@ async function part1(data: Data): Promise<number> {
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    let sum = 0;
+    for (const sp of data.startingPoints)
+        sum += explore(data, sp, false).length;
+
+    return sum;
 }
 
-function explore({ map }: Data, p: Pos) {
+function explore({ map }: Data, p: Pos, part1 = true) {
     const queue: Pos[] = [p];
     const finished: Pos[] = [];
     const visited: Pos[] = [];
@@ -62,11 +69,13 @@ function explore({ map }: Data, p: Pos) {
         }
 
         for (const a of around) {
-            if (visited.some(v => v.r === a.r && v.c === a.c))
+            if (part1 && visited.some(v => v.r === a.r && v.c === a.c))
                 continue;
 
             queue.push(a);
-            visited.push(a);
+
+            if (part1)
+                visited.push(a);
         }
     }
 
