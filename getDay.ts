@@ -6,6 +6,7 @@ import fs from "fs";
 import { colors } from "./types";
 
 const defaultYear = 2024;
+const defaultDay = new Date().getDate();
 const session = fs.readFileSync('session.txt', 'utf-8').trimEnd();
 
 (async () => {
@@ -18,17 +19,26 @@ const session = fs.readFileSync('session.txt', 'utf-8').trimEnd();
         z.string(),
         z.string(),
         z.coerce.number(),
+    ])).or(z.tuple([
+        z.string(),
+        z.string(),
     ])).parse(process.argv);
 
 
     let year, day;
 
-    if (args.length === 4) {
-        year = process.argv[2];
-        day = process.argv[3];
-    } else {
-        year = defaultYear;
-        day = process.argv[2];
+    switch (args.length) {
+        case 4:
+            year = process.argv[2];
+            day = process.argv[3];
+            break;
+        case 3:
+            year = defaultYear;
+            day = process.argv[2];
+            break;
+        default:
+            year = defaultYear.toString();
+            day = defaultDay.toString();
     }
 
     const challenge = await axios({
@@ -62,14 +72,19 @@ export default async function ${short}() {
         false,
         ['Part 2 test 1', part2, 'sampleData2.txt', 0],
         ['Part 2', part2, 'input.txt', null],
-    ]);
+    ], parseData);
 }
 
-async function part1(data: string[]): Promise<number> {
+type Data = ReturnType<typeof parseData>;
+function parseData(_data: string[]) {
+    return _data;
+}
+
+async function part1(data: Data): Promise<number> {
     return -Infinity;
 }
 
-async function part2(data: string[]): Promise<number> {
+async function part2(data: Data): Promise<number> {
     return -Infinity;
 }`;
 
@@ -78,7 +93,7 @@ async function part2(data: string[]): Promise<number> {
 
     fs.mkdirSync(path, { recursive: true });
     fs.writeFileSync(`${path}/${short}.ts`, tsContent);
-    fs.writeFileSync(`${path}/input.txt`, (input.data as string).trimEnd());
+    fs.writeFileSync(`${path}/input.txt`, input.data.toString().trimEnd());
     fs.writeFileSync(`${path}/sampleData1.txt`, '');
     fs.writeFileSync(`${path}/sampleData2.txt`, '');
 
