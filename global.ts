@@ -4,15 +4,15 @@ import log from './log';
 
 let startDate: Date;
 
-type Entry<T> = [
+type Entry<T, U extends any[]> = [
     name: string,
-    fn: ((data: T, ...extra: any[]) => number | Promise<number>),
+    fn: ((data: T, ...extra: U) => number | Promise<number>),
     path: string,
     expected: number | ((result: number) => boolean) | null,
-    ...extra: any[]
+    ...extra: U
 ];
 
-export async function run<T = string[]>(dayPath: string, entries: (Entry<T> | null | false)[], dataParser?: (data: string[]) => T) {
+export async function run<T = string[], U extends any[] = []>(dayPath: string, entries: (Entry<T, U> | null | false)[], dataParser?: (data: string[]) => T) {
     for (let entry of entries) {
         if (entry === null) {
             log();
