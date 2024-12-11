@@ -26,7 +26,8 @@ async function part1(data: Data, blinktimes: number = 25): Promise<number> {
             acc + count(stone, blinktimes), 0);
 }
 
-const count = cache(_count);
+// const count = cache(_count);
+const count = cache(_count, (stone, blink) => `${stone}-${blink}`); // faster by 30ms for some reason
 function _count(stone: number, blink: number): number {
     const stoneStr = stone.toString();
     const nextB = blink - 1;
