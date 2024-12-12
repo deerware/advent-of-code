@@ -2,18 +2,25 @@ import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
 import { randomUUID } from 'crypto';
+import cartesian, { PosD } from '../../helpers/cartesian';
+
+// Not proud of today... Spaghetti 🍝
 
 export default async function gardengroups() {
     log('Day 12: Garden Groups');
 
     await global.run('2024/12_Garden_Groups', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 140],
-        ['Part 1 test 1', part1, 'sampleData2.txt', 772],
-        ['Part 1 test 1', part1, 'sampleData3.txt', 1930],
+        ['Part 1 test 2', part1, 'sampleData2.txt', 772],
+        ['Part 1 test 3', part1, 'sampleData3.txt', 1930],
         ['Part 1', part1, 'input.txt', 1518548],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        null,
+        ['Part 2 test 1', part2, 'sampleData4.txt', 80],
+        ['Part 2 test 2', part2, 'sampleData5.txt', 436],
+        ['Part 2 test 3', part2, 'sampleData6.txt', 236],
+        ['Part 2 test 4', part2, 'sampleData7.txt', 368],
+        ['Part 2 test 5', part2, 'sampleData3.txt', 1206],
+        ['Part 2', part2, 'input.txt', 909564],
     ], parseData);
 }
 
@@ -23,8 +30,8 @@ function parseData(_data: string[]) {
     return _data;
 }
 
-async function part1(data: Data): Promise<number> {
-    const regions: { [key: string]: { plant: string, area: number, perimeter: number } } = {}
+async function part1(data: Data, part2 = false): Promise<number> {
+    const regions: { [key: string]: { plant: string, area: number, perimeter: number, fences: PosD[] } } = {}
     const posRegMap: { [key: string]: string } = {};
 
     for (let r = 0; r < data.length; r++) {
@@ -37,11 +44,38 @@ async function part1(data: Data): Promise<number> {
             }
 
             if (!regions[region])
-                regions[region] = { plant: data[r][c], area: 1, perimeter: 0 };
+                regions[region] = { plant: data[r][c], area: 1, perimeter: 0, fences: [] };
             else
                 regions[region].area++;
 
-            regions[region].perimeter += scanAround(data, pos, true).filter(p => p !== data[r][c]).length;
+            const current = data[r][c];
+            for (const neighbor of cartesian.cPosAround(pos)) {
+                const nData = cartesian.get(data, neighbor);
+
+                if (nData !== current)
+                    if (part2)
+                        regions[region].fences.push(neighbor);
+                    else
+                        regions[region].perimeter += 1;
+
+            }
+        }
+    }
+
+    if (part2) {
+        for (const region in regions) {
+            const fencesScanned = new Set<string>();
+
+            for (const fence of regions[region].fences) {
+                const moveTo = (fence.dir === 'top' || fence.dir === 'bottom') ? 'left' : 'top';
+
+                const neighbor = cartesian.move(fence, moveTo);
+                const neighborKey = `${neighbor.r},${neighbor.c},${fence.dir}`;
+                if (!fencesScanned.has(neighborKey))
+                    regions[region].perimeter++;
+
+                fencesScanned.add(`${fence.r},${fence.c},${fence.dir}`);
+            }
         }
     }
 
@@ -53,19 +87,21 @@ async function part1(data: Data): Promise<number> {
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    return part1(data, true);
 }
 
 const DIRs = [
     { r: -1, c: 0 },
+    { r: 0, c: 1 },
     { r: 1, c: 0 },
     { r: 0, c: -1 },
-    { r: 0, c: 1 },
 ];
 
 function findRegion(data: Data, pos: Pos, posRegMap: { [key: string]: string }, visited: Set<string> = new Set()): string | null {
     const key = `${pos.r},${pos.c}`;
-    if (visited.has(key)) return null;
+    if (visited.has(key))
+        return null;
+
     visited.add(key);
 
     if (posRegMap[key])
@@ -82,6 +118,7 @@ function findRegion(data: Data, pos: Pos, posRegMap: { [key: string]: string }, 
             return region;
         }
     }
+    return null;
 }
 
 function aroundPos(pos: Pos, data?: Data) {
@@ -96,22 +133,6 @@ function aroundPos(pos: Pos, data?: Data) {
             continue;
 
         around.push({ r, c });
-    }
-    return around;
-}
-
-function scanAround(data: Data, pos: Pos, outOfBound?: false): string[]
-function scanAround(data: Data, pos: Pos, outOfBound: true): (string | null)[]
-function scanAround(data: Data, pos: Pos, outOfBound = false) {
-    const around: (string | null)[] = [];
-    for (const { r, c } of aroundPos(pos)) {
-        if (r < 0 || r >= data.length || c < 0 || c >= data[0].length) {
-            if (outOfBound)
-                around.push(null);
-            continue;
-        }
-
-        around.push(data[r][c]);
     }
     return around;
 }
