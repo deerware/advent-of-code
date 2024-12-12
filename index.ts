@@ -9,6 +9,7 @@ import resonantcollinearity from './2024/08_Resonant_Collinearity/resonantcollin
 import diskfragmenter from './2024/09_Disk_Fragmenter/diskfragmenter';
 import hoofit from './2024/10_Hoof_It/hoofit';
 import plutonianpebbles from './2024/11_Plutonian_Pebbles/plutonianpebbles';
+import gardengroups from './2024/12_Garden_Groups/gardengroups';
 import log from './log';
 
 (async () => {
@@ -23,7 +24,8 @@ import log from './log';
         // await resonantcollinearity();
         // await diskfragmenter();
         // await hoofit();
-        await plutonianpebbles();
+        // await plutonianpebbles();
+        await gardengroups();
     } catch (e) {
         log('Error:', (e as any).message);
     }
