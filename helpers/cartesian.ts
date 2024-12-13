@@ -1,5 +1,7 @@
 // I know it's not really cartesian, but I don't know what to call it.
 
+// Tohle celý asi zahodit, ale nechám to tu pro inspiraci, třeba to někdy předělám na něco fajnovýho.
+
 const defaultNamedDIRs = {
     left: { r: -1, c: 0 },
     right: { r: 1, c: 0 },

@@ -10,6 +10,7 @@ import diskfragmenter from './2024/09_Disk_Fragmenter/diskfragmenter';
 import hoofit from './2024/10_Hoof_It/hoofit';
 import plutonianpebbles from './2024/11_Plutonian_Pebbles/plutonianpebbles';
 import gardengroups from './2024/12_Garden_Groups/gardengroups';
+import clawcontraption from './2024/13_Claw_Contraption/clawcontraption';
 import log from './log';
 
 (async () => {
@@ -25,7 +26,8 @@ import log from './log';
         // await diskfragmenter();
         // await hoofit();
         // await plutonianpebbles();
-        await gardengroups();
+        // await gardengroups(); // 🍝
+        await clawcontraption();
     } catch (e) {
         log('Error:', (e as any).message);
     }
