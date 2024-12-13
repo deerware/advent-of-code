@@ -62,7 +62,7 @@ const math = mathjs.create(mathjs.all, {
     precision: 64,
 });
 
-const ff = Math.pow(10, 3); // not ideal, sadly
+const ff = Math.pow(10, 5); // not ideal, sadly
 const part2Offset = 10000000000000;
 
 function findPrize(_arcade: Arcade, part2 = false) {
@@ -83,15 +83,9 @@ function findPrize(_arcade: Arcade, part2 = false) {
 
     if (
         aCount < 0 || bCount < 0 ||
-        !Number.isInteger(aCount) || !Number.isInteger(bCount) ||
-        !check(arcade, aCount, bCount)
+        !Number.isInteger(aCount) || !Number.isInteger(bCount)
     )
         return null;
 
     return [aCount, bCount];
-}
-
-function check(arcade: Arcade, a: number, b: number) { // Solution works just fine without this, but i feel better with it
-    return arcade.buttonA[0] * a + arcade.buttonB[0] * b === arcade.prize[0] &&
-        arcade.buttonA[1] * a + arcade.buttonB[1] * b === arcade.prize[1];
 }
