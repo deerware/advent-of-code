@@ -9,9 +9,8 @@ export default async function restroomredoubt() {
         ['Part 1 test 1', part1, 'sampleData1.txt', 0, [11, 7], 5],
         ['Part 1 test 2', part1, 'sampleData2.txt', 12, [11, 7], 100],
         ['Part 1', part1, 'input.txt', 231221760, [101, 103], 100],
-        false,
-        // ['Part 2 test 1', part2, 'sampleData2.txt', 0, [11, 7]],
-        // ['Part 2', part2, 'input.txt', null, [101, 103]],
+        null,
+        ['Part 2', part2, 'input.txt', 6771, [101, 103], -Infinity],
     ], parseData);
 }
 
@@ -36,7 +35,11 @@ async function part1(data: Data, mapDimensions: Pos, seconds: number): Promise<n
 }
 
 async function part2(data: Data, mapDimensions: Pos, seconds: number): Promise<number> {
-    return -Infinity;
+    let i = 0;
+    for (; !isChristmasTree(data); i++)
+        moveAll(data, mapDimensions);
+
+    return i;
 }
 
 function moveAll(data: Data, mapDimensions: Pos) {
@@ -83,6 +86,26 @@ function evaluate(data: Data, mapDimensions: Pos) {
     return sums.reduce((acc, sum) => acc * sum, 1);
 }
 
+function isChristmasTree(data: Data) {
+    for (const r1 of data) {
+        if (!data.some(r2 => r2.pos[1] === r1.pos[1]))
+            continue;
+
+        let valid = true;
+        for (let i = 1; i < 10; i++) {
+            if (!data.some(r2 => r2.pos[1] === r1.pos[1] && r2.pos[0] === r1.pos[0] + i)) {
+                valid = false;
+                break;
+            }
+        }
+
+        if (valid)
+            return true;
+    }
+
+    return false;
+}
+
 function render(data: Data, mapDimensions: Pos) {
     console.log("---")
     for (let i = 0; i < mapDimensions[1]; i++) {
@@ -91,6 +114,10 @@ function render(data: Data, mapDimensions: Pos) {
             const robots = data.filter(robot => robot.pos[0] === j && robot.pos[1] === i);
             row += robots.length > 0 ? robots.length : '.';
         }
-        console.log(i.toString(16) + ' ' + row);
+        console.log(i.toString().padStart(3, ' ') + ' ' + row);
     }
+}
+
+async function sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }

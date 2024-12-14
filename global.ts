@@ -12,6 +12,7 @@ type Entry<T, U extends any[]> = [
     ...extra: U
 ];
 
+// FIXME each entry can have different extras
 export async function run<T = string[], U extends any[] = []>(dayPath: string, entries: (Entry<T, U> | null | false)[], dataParser?: (data: string[]) => T) {
     for (let entry of entries) {
         if (entry === null) {
