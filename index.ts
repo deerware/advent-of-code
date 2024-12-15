@@ -12,6 +12,7 @@ import plutonianpebbles from './2024/11_Plutonian_Pebbles/plutonianpebbles';
 import gardengroups from './2024/12_Garden_Groups/gardengroups';
 import clawcontraption from './2024/13_Claw_Contraption/clawcontraption';
 import restroomredoubt from './2024/14_Restroom_Redoubt/restroomredoubt';
+import warehousewoes from './2024/15_Warehouse_Woes/warehousewoes';
 import log from './log';
 
 (async () => {
@@ -29,7 +30,8 @@ import log from './log';
         // await plutonianpebbles();
         // await gardengroups(); // 🍝
         // await clawcontraption();
-        await restroomredoubt();
+        // await restroomredoubt();
+        await warehousewoes();
     } catch (e) {
         log('Error:', (e as any).message);
     }
