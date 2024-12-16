@@ -5,7 +5,9 @@
   "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "getDay": "node ./build/getDay.js"
+    "getDay": "node ./build/getDay.js",
+    "encrypt": "node ./build/encrypt.js",
+    "decrypt": "node ./build/decrypt.js"
   },
   "author": "deerware Milan Jelínek",
   "private": true,

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { colors } from './types';
 import log from './log';
+import inputCrypt from './inputCrypt';
 
 let startDate: Date;
 
@@ -67,7 +68,9 @@ export function logExectionTime() {
 }
 
 export function loadLines(path: string) {
-    return fs.readFileSync(path).toString().split(/\r?\n/);
+    return inputCrypt
+        .decrypt(fs.readFileSync(path).toString())
+        .split(/\r?\n/);
 }
 
 export function regexIndexOf(string: string, regex: RegExp, startpos?: number) {

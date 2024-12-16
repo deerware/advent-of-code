@@ -4,10 +4,11 @@ import axios from "axios";
 import strBetween from "./helpers/str";
 import fs from "fs";
 import { colors } from "./types";
+import inputCrypt from "./inputCrypt";
 
 const defaultYear = 2024;
 const defaultDay = new Date().getDate();
-const session = fs.readFileSync('session.txt', 'utf-8').trimEnd();
+const session = fs.readFileSync('secrets/session.txt', 'utf-8').trimEnd();
 
 (async () => {
     const args = z.tuple([
@@ -23,7 +24,6 @@ const session = fs.readFileSync('session.txt', 'utf-8').trimEnd();
         z.string(),
         z.string(),
     ])).parse(process.argv);
-
 
     let year, day;
 
@@ -93,7 +93,7 @@ async function part2(data: Data): Promise<number> {
 
     fs.mkdirSync(path, { recursive: true });
     fs.writeFileSync(`${path}/${short}.ts`, tsContent);
-    fs.writeFileSync(`${path}/input.txt`, input.data.toString().trimEnd());
+    fs.writeFileSync(`${path}/input.txt`, inputCrypt.encrypt(input.data.toString().trimEnd()));
     fs.writeFileSync(`${path}/sampleData1.txt`, '');
     fs.writeFileSync(`${path}/sampleData2.txt`, '');
 
