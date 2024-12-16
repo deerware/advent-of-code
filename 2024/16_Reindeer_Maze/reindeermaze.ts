@@ -2,6 +2,7 @@ import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
 import { z } from 'zod';
+import fs from 'fs';
 
 // Today's inspirations:
 // https://www.geeksforgeeks.org/difference-between-dijkstras-algorithm-and-a-search-algorithm/ Difference Between Dijkstra's Algorithm and A* Search Algorithm
@@ -15,9 +16,12 @@ export default async function reindeermaze() {
         ['Part 1 test 1', part1, 'sampleData1.txt', 7036],
         ['Part 1 test 2', part1, 'sampleData2.txt', 11048],
         ['Part 1', part1, 'input.txt', 105496],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 45],
+        ['Part 2 test 2', part2, 'sampleData2.txt', 64],
+        ['Part 2 test FS', part2, 'fs.txt', 531],
+        ['Part 2 test MGA', part2, 'mga.txt', 479],
+        ['Part 2', part2, 'input.txt', n => n > 500 && n < 582],
     ], parseData);
 }
 
@@ -60,24 +64,35 @@ function parseData(_data: string[]) {
 }
 
 async function part1({ map, startingPos, endingPos }: Data): Promise<number> {
-    const nodes = findpath(map, startingPos, endingPos);
+    const nodes = findpath(map, startingPos);
     const endNodes = Object.values(nodes).filter(n => n.pos[0] === endingPos[0] && n.pos[1] === endingPos[1]);
     if (endNodes.length === 0)
         throw new Error('No path found');
 
-    return endNodes.reduce((a, b) => a.score < b.score ? a : b).score;
+    const best = endNodes.reduce((a, b) => a.score < b.score ? a : b);
+
+    return best.score;
 }
 
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
+async function part2({ map, startingPos, endingPos }: Data): Promise<number> {
+    const nodes = findpath(map, startingPos, true);
+    const endNodes = Object.values(nodes).filter(n => n.pos[0] === endingPos[0] && n.pos[1] === endingPos[1]);
+    if (endNodes.length === 0)
+        throw new Error('No path found');
+
+    const best = endNodes.reduce((a, b) => a.score < b.score ? a : b);
+
+    // createFlowchart(nodes, best);
+
+    return uniqueTilesPath(map, nodes, best);
 }
 
 function posKey(pos: Pos, facing: DIR) {
     return `${pos[0]};${pos[1]};${facing}`;
 }
 
-type Node = { pos: Pos, facing: DIR, key: string, visited: boolean, score: number, previous: string | null };
-function findpath(map: Map, startingPos: Pos, endingPos: Pos) {
+type Node = { pos: Pos, facing: DIR, key: string, visited: boolean, score: number, previous: string[] | null };
+function findpath(map: Map, startingPos: Pos, allPaths = false) {
     const nodes: { [key: string]: Node } = {}
     const unvisited = new Set<string>();
 
@@ -114,14 +129,14 @@ function findpath(map: Map, startingPos: Pos, endingPos: Pos) {
             const subPosKey = subPos.key;
             const newScore = current.score + subPos.turningCost + 1;
             if (nodes[subPosKey]) {
-                if (newScore < nodes[subPosKey].score) {
+                if (allPaths ? newScore <= nodes[subPosKey].score : newScore < nodes[subPosKey].score) {
                     nodes[subPosKey].score = newScore;
-                    nodes[subPosKey].previous = current.key;
+                    (nodes[subPosKey].previous as string[]).push(current.key);
                 }
                 continue;
             }
 
-            nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, visited: false, score: newScore, previous: current.key };
+            nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, visited: false, score: newScore, previous: [current.key] };
             unvisited.add(subPosKey);
         }
     }
@@ -130,7 +145,7 @@ function findpath(map: Map, startingPos: Pos, endingPos: Pos) {
 }
 
 function breakdown(pos: Pos, facing: DIR) {
-    const subpos: { key: string, pos: Pos, facing: DIR, /*score: number,*/ turningCost: number }[] = [];
+    const subpos: { key: string, pos: Pos, facing: DIR, /*;: number,*/ turningCost: number }[] = [];
     const currentDir = DIRs[facing];
 
     for (const _dir in DIRs) {
@@ -164,4 +179,60 @@ function getNeighbor(map: Map, pos: Pos, dir: DIR) {
         return null;
 
     return newTilePos;
+}
+
+function uniqueTilesPath(map: Map, nodes: Record<string, Node>, bestNode: Node) {
+    const path = new Set<string>();
+
+    function _uniqueTilesPath(nodes: Record<string, Node>, bestNode: Node) {
+        if (bestNode.previous === null)
+            return;
+
+        for (const _node of bestNode.previous) {
+            const node = nodes[_node];
+            path.add(`${node.pos[0]};${node.pos[1]}`);
+            _uniqueTilesPath(nodes, nodes[_node]);
+        }
+    }
+
+    _uniqueTilesPath(nodes, bestNode);
+
+    render(map, path);
+    return path.size + 1; // + 1 for the ending node
+}
+
+function createFlowchart(nodes: Record<string, Node>, bestNode: Node) {
+    function _createFlowchart(nodes: Record<string, Node>, bestNode: Node) {
+        if (bestNode.previous === null)
+            return `\n    START --> ${bestNode.pos[0]}-${bestNode.pos[1]}-${bestNode.facing}`;
+
+        let result = "";
+
+        for (const _node of bestNode.previous) {
+            const node = nodes[_node];
+            result += `\n    ${node.pos[0]}-${node.pos[1]}-${node.facing} --> ${bestNode.pos[0]}-${bestNode.pos[1]}-${bestNode.facing}`;
+            result += _createFlowchart(nodes, node);
+        }
+
+        return result;
+    }
+
+    fs.writeFileSync('flowchart.txt ', `flowchart LR` + _createFlowchart(nodes, bestNode));
+}
+
+function render(map: Map, uniquePaths: Set<string>) {
+    let result = "";
+    for (let r = 0; r < map.length; r++) {
+        for (let c = 0; c < map[r].length; c++) {
+            const tile = map[r][c];
+            if (tile === TILE.WALL)
+                result += '#';
+            else if (tile === TILE.AIR) {
+                const pos = `${r};${c}`;
+                result += uniquePaths.has(pos) ? 'O' : '.';
+            }
+        }
+        result += "\n";
+        fs.writeFileSync('render.txt', result);
+    }
 }
