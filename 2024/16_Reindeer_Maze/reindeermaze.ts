@@ -21,7 +21,7 @@ export default async function reindeermaze() {
         ['Part 2 test 2', part2, 'sampleData2.txt', 64],
         ['Part 2 test FS', part2, 'fs.txt', 531],
         ['Part 2 test MGA', part2, 'mga.txt', 479],
-        ['Part 2', part2, 'input.txt', n => n > 500 && n < 582],
+        ['Part 2', part2, 'input.txt', 524],
     ], parseData);
 }
 
@@ -50,6 +50,14 @@ function parseData(_data: string[]) {
             else if (_data[r][c] === 'E') {
                 endingPos = [r, c];
                 row.push(TILE.AIR);
+                continue;
+            }
+            else if (_data[r][c] === 'O') {
+                row.push(TILE.AIR);
+                continue;
+            }
+            else if (_data[r][c] === 'X') {
+                row.push(TILE.WALL);
                 continue;
             }
             row.push(_data[r][c] as TILE);
@@ -129,10 +137,13 @@ function findpath(map: Map, startingPos: Pos, allPaths = false) {
             const subPosKey = subPos.key;
             const newScore = current.score + subPos.turningCost + 1;
             if (nodes[subPosKey]) {
-                if (allPaths ? newScore <= nodes[subPosKey].score : newScore < nodes[subPosKey].score) {
+                if (newScore < nodes[subPosKey].score) {
                     nodes[subPosKey].score = newScore;
-                    (nodes[subPosKey].previous as string[]).push(current.key);
+                    nodes[subPosKey].previous = [current.key];
                 }
+                if (allPaths && newScore == nodes[subPosKey].score)
+                    (nodes[subPosKey].previous as string[]).push(current.key);
+
                 continue;
             }
 
@@ -197,7 +208,6 @@ function uniqueTilesPath(map: Map, nodes: Record<string, Node>, bestNode: Node) 
 
     _uniqueTilesPath(nodes, bestNode);
 
-    render(map, path);
     return path.size + 1; // + 1 for the ending node
 }
 
