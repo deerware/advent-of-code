@@ -8,8 +8,8 @@ export default async function chronospatialcomputer() {
     await global.run('2024/17_Chronospatial_Computer', [
         ['Part 1 test 1', part1, 'sampleData1.txt', '4,6,3,5,6,3,5,2,1,0'],
         ['Part 1', part1, 'input.txt', '1,3,7,4,6,4,2,3,5'],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', ''],
+        null,
+        ['Part 2 test 1', part2, 'sampleData2.txt', '117440'],
         ['Part 2', part2, 'input.txt', null],
     ], parseData);
 }
@@ -21,10 +21,12 @@ function parseData(_data: string[]) {
         B: parseInt(_data[1].split(': ')[1]),
         C: parseInt(_data[2].split(': ')[1]),
     }
-    const program = _data[4].split(': ')[1].split(',').map(Number);
+    const programRaw = _data[4].split(': ')[1]
+    const program = programRaw.split(',').map(Number);
     return {
         registers,
         program,
+        programRaw,
     };
 }
 
@@ -33,7 +35,14 @@ async function part1(data: Data): Promise<string> {
 }
 
 async function part2(data: Data): Promise<string> {
-    return '';
+    let i = 0;
+    while (true) {
+        data.registers.A = i;
+        if (runProgram(data) == data.programRaw)
+            return i.toString();
+
+        i++;
+    }
 }
 
 function runProgram(data: Data): string {

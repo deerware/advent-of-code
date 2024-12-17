@@ -34,8 +34,8 @@ import log from './log';
         // await clawcontraption();
         // await restroomredoubt();
         // await warehousewoes();
-        // await reindeermaze();
-        await chronospatialcomputer();
+        // await reindeermaze(); // part 2 not finished
+        await chronospatialcomputer(); // part 2 brute forced
     } catch (e) {
         log('Error:', (e as any).message);
     }
