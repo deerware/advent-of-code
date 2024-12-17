@@ -10,8 +10,8 @@ export default async function guardgallivant() {
     log('Day 6: Guard Gallivant');
 
     await global.run('2024/06_Guard_Gallivant', [
-        ['Part 1 test 1', part1, 'sampleData.txt', 41],
-        ['Part 1', part1, 'input.txt', 5305],
+        ['Part 1 test 1', part1Wrapper, 'sampleData.txt', 41],
+        ['Part 1', part1Wrapper, 'input.txt', 5305],
         null,
         ['Part 2 test 1', part2, 'sampleData.txt', 6],
         ['Part 2', part2, 'input.txt', 2143],
@@ -54,6 +54,10 @@ function parseData(data: string[]) {
     }
 
     return { obstacles, startingPos: pos, pos, dir, width, height, visited: [], visitedDir: [] } as Data;
+}
+
+async function part1Wrapper(data: Data): Promise<number> {
+    return part1(data, false);
 }
 
 async function part1(data: Data, forPart2?: false): Promise<number>;

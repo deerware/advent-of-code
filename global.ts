@@ -5,16 +5,16 @@ import inputCrypt from './inputCrypt';
 
 let startDate: Date;
 
-type Entry<T, U extends any[]> = [
+type Entry<T, U extends any[], V> = [
     name: string,
-    fn: ((data: T, ...extra: U) => number | Promise<number>),
+    fn: ((data: T, ...extra: U) => V | Promise<V>),
     path: string,
-    expected: number | ((result: number) => boolean) | null,
+    expected: V | ((result: V) => boolean) | null,
     ...extra: U
 ];
 
-// FIXME each entry can have different extras
-export async function run<T = string[], U extends any[] = []>(dayPath: string, entries: (Entry<T, U> | null | false)[], dataParser?: (data: string[]) => T) {
+// FIXME each entry can have different extras !!!
+export async function run<T = string[], U extends any[] = [], V = number>(dayPath: string, entries: (Entry<T, U, V> | null | false)[], dataParser?: (data: string[]) => T) {
     for (let entry of entries) {
         if (entry === null) {
             log();
@@ -44,8 +44,8 @@ export async function run<T = string[], U extends any[] = []>(dayPath: string, e
     }
 }
 
-export function logResult(title: string, result: number, expected?: number | ((n: number) => boolean)) {
-    const pass = (typeof expected === 'function') ? expected(result) : result === expected;
+export function logResult<V>(title: string, result: V, expected?: V | ((n: V) => boolean)) {
+    const pass = (typeof expected === 'function') ? (expected as ((n: V) => boolean))(result) : result === expected;
 
     if (expected !== undefined)
         log(pass ? colors.fg.green : colors.fg.red, `${title}: ${result} ${pass ? '===' : '!=='} ${expected} ${pass ? "PASS" : "FAIL"}`);
