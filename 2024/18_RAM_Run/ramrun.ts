@@ -11,11 +11,11 @@ export default async function ramrun() {
     log('Day 18: RAM Run');
 
     await global.run('2024/18_RAM_Run', [
-        ['Part 1 test 1', part1, 'sampleData1.txt', 22, 7, 12],
-        ['Part 1', part1, 'input.txt', n => n > 318, 71, 1024],
-        false,
-        // ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        // ['Part 2', part2, 'input.txt', null],
+        ['Part 1 test 1', part1, 'sampleData1.txt', '22', 7, 12],
+        ['Part 1', part1, 'input.txt', '318', 71, 1024],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', '6,1', 7, 12],
+        ['Part 2', part2, 'input.txt', '56,29', 71, 1024],
     ], parseData);
 }
 
@@ -30,24 +30,27 @@ function parseData(_data: string[]) {
     const bytes: Pos[] = [];
     for (const line of _data) {
         const parts = line.split(',').map(Number);
-        bytes.push([parts[1], parts[0]]);
+        bytes.push([parts[1], parts[0]]); // x,y -> r,c
     }
     return { bytes };
 }
 
-async function part1(data: Data, size: number, take: number): Promise<number> {
+async function part1(data: Data, size: number, take: number): Promise<string> {
     const map = createMap(data.bytes.slice(0, take), size);
-
-    render(map);
-
-    const path = pathfind(map, [0, 0]);
-
-
-    return path.best.score;
+    const path = pathfind(map);
+    return path.best.score.toString();
 }
 
-async function part2(data: Data, size: number): Promise<number> {
-    return -Infinity;
+async function part2(data: Data, size: number, take: number): Promise<string> {
+    for (let i = take + 1; i < data.bytes.length; i++) {
+        const map = createMap(data.bytes.slice(0, i), size);
+        const path = pathfind(map);
+
+        if (path.best === undefined)
+            return data.bytes[i - 1].reverse().join(','); // Reverse = r,c -> x,y
+    }
+
+    throw new Error('Solution not found.');
 }
 
 function createMap(bytes: Pos[], size: number) {
@@ -65,20 +68,21 @@ function createMap(bytes: Pos[], size: number) {
 }
 
 function posKey(pos: Pos) {
-    return `${pos[0]};${pos[1]}`;
+    return `${pos[0]},${pos[1]}`;
 }
 
-type Node = { pos: Pos, key: string, visited: boolean, score: number, previous: string[] | null };
-function pathfind(map: Map, startingPos: Pos, endingPos: Pos = [map.length - 1, map[0].length - 1], allpaths = false) {
+// Refurbished Day 16
+type Node = { pos: Pos, key: string, score: number, previous: string[] | null };
+function pathfind(
+    map: Map,
+    startingPos: Pos = [0, 0],
+    endingPos: Pos = [map.length - 1, map[0].length - 1],
+    allpaths = false
+) {
     const nodes: { [key: string]: Node } = {}
     const unvisited = new Set<string>();
 
-    function markVisited(node: Node) {
-        node.visited = true;
-        unvisited.delete(node.key);
-    }
-
-    nodes[posKey(startingPos)] = { pos: startingPos, key: posKey(startingPos), visited: false, score: 0, previous: null };
+    nodes[posKey(startingPos)] = { pos: startingPos, key: posKey(startingPos), score: 0, previous: null };
     unvisited.add(posKey(startingPos));
 
     while (unvisited.size > 0) {
@@ -92,8 +96,7 @@ function pathfind(map: Map, startingPos: Pos, endingPos: Pos = [map.length - 1, 
         });
         if (_current === undefined) throw new Error();
         const current = nodes[_current];
-
-        markVisited(current);
+        unvisited.delete(current.key);
 
         const neighbors = getNeighbors(map, current.pos);
         for (const neighbor of neighbors) {
@@ -110,7 +113,7 @@ function pathfind(map: Map, startingPos: Pos, endingPos: Pos = [map.length - 1, 
                 continue;
             }
 
-            nodes[neighborKey] = { pos: neighbor, key: neighborKey, visited: false, score, previous: [current.key] };
+            nodes[neighborKey] = { pos: neighbor, key: neighborKey, score, previous: [current.key] };
             unvisited.add(neighborKey);
         }
     }
@@ -128,10 +131,7 @@ function getNeighbors(map: Map, pos: Pos) {
     const neighbors: Pos[] = [];
     for (const dir of Object.values(DIRs)) {
         const neighbor = [pos[0] + dir[0], pos[1] + dir[1]] as Pos;
-        if (neighbor[0] < 0 || neighbor[0] >= map.length || neighbor[1] < 0 || neighbor[1] >= map[0].length)
-            continue;
-
-        if (map[neighbor[0]][neighbor[1]] === TILE.WALL)
+        if (neighbor[0] < 0 || neighbor[0] >= map.length || neighbor[1] < 0 || neighbor[1] >= map[0].length || map[neighbor[0]][neighbor[1]] === TILE.WALL)
             continue;
 
         neighbors.push(neighbor);
@@ -146,11 +146,8 @@ function render(map: Map) {
             const tile = map[r][c];
             if (tile === TILE.WALL)
                 result += '#';
-            else if (tile === TILE.AIR) {
-                // const pos = `${r};${c}`;
-                // result += uniquePaths.has(pos) ? 'O' : '.';
+            else if (tile === TILE.AIR)
                 result += '.';
-            }
         }
         result += "\n";
         fs.writeFileSync('render.txt', result);

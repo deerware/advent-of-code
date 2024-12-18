@@ -92,7 +92,7 @@ async function part2({ map, startingPos, endingPos }: Data): Promise<number> {
 
     // createFlowchart(nodes, best);
 
-    return uniqueTilesPath(map, nodes, best);
+    return uniqueTilesPath(map, nodes, best).size + 1; // + 1 for the ending node;
 }
 
 function posKey(pos: Pos, facing: DIR) {
@@ -202,7 +202,7 @@ export function uniqueTilesPath(map: Map, nodes: Record<string, SimpleNode>, bes
 
         for (const _node of bestNode.previous) {
             const node = nodes[_node];
-            path.add(`${node.pos[0]};${node.pos[1]}`);
+            path.add(`${node.pos[0]},${node.pos[1]}`);
             _uniqueTilesPath(nodes, nodes[_node]);
         }
     }
@@ -211,7 +211,7 @@ export function uniqueTilesPath(map: Map, nodes: Record<string, SimpleNode>, bes
 
     // render(map, path);
 
-    return path.size + 1; // + 1 for the ending node
+    return path;
 }
 
 function createFlowchart(nodes: Record<string, Node>, bestNode: Node) {
