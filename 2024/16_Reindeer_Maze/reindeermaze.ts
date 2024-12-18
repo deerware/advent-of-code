@@ -99,20 +99,15 @@ function posKey(pos: Pos, facing: DIR) {
     return `${pos[0]};${pos[1]};${facing}`;
 }
 
-type Node = { pos: Pos, facing: DIR, key: string, visited: boolean, score: number, previous: string[] | null };
+type Node = { pos: Pos, facing: DIR, key: string, score: number, previous: string[] | null };
 export function findpath(map: Map, startingPos: Pos, allPaths = false) {
     const nodes: { [key: string]: Node } = {}
     const unvisited = new Set<string>();
 
     for (const subPos of breakdown(startingPos, 'right')) {
         const subPosKey = subPos.key;
-        nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, visited: false, score: subPos.turningCost, previous: null };
+        nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, score: subPos.turningCost, previous: null };
         unvisited.add(subPosKey);
-    }
-
-    function markVisited(node: Node) {
-        node.visited = true;
-        unvisited.delete(node.key);
     }
 
     while (unvisited.size > 0) {
@@ -126,8 +121,7 @@ export function findpath(map: Map, startingPos: Pos, allPaths = false) {
         });
         if (_current === undefined) throw new Error();
         const current = nodes[_current];
-
-        markVisited(current);
+        unvisited.delete(current.key);
 
         const neighbor = getNeighbor(map, current.pos, current.facing);
         if (!neighbor)
@@ -147,7 +141,7 @@ export function findpath(map: Map, startingPos: Pos, allPaths = false) {
                 continue;
             }
 
-            nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, visited: false, score: newScore, previous: [current.key] };
+            nodes[subPosKey] = { pos: subPos.pos, facing: subPos.facing, key: subPosKey, score: newScore, previous: [current.key] };
             unvisited.add(subPosKey);
         }
     }
