@@ -15,6 +15,7 @@ import restroomredoubt from './2024/14_Restroom_Redoubt/restroomredoubt';
 import warehousewoes from './2024/15_Warehouse_Woes/warehousewoes';
 import reindeermaze from './2024/16_Reindeer_Maze/reindeermaze';
 import chronospatialcomputer from './2024/17_Chronospatial_Computer/chronospatialcomputer';
+import ramrun from './2024/18_RAM_Run/ramrun';
 import log from './log';
 
 (async () => {
@@ -35,7 +36,8 @@ import log from './log';
         // await restroomredoubt();
         // await warehousewoes();
         // await reindeermaze();
-        await chronospatialcomputer(); // part 2 not finished
+        // await chronospatialcomputer(); // part 2 not finished
+        await ramrun();
     } catch (e) {
         log('Error:', (e as any).message);
     }

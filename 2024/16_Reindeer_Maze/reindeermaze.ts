@@ -100,7 +100,7 @@ function posKey(pos: Pos, facing: DIR) {
 }
 
 type Node = { pos: Pos, facing: DIR, key: string, visited: boolean, score: number, previous: string[] | null };
-function findpath(map: Map, startingPos: Pos, allPaths = false) {
+export function findpath(map: Map, startingPos: Pos, allPaths = false) {
     const nodes: { [key: string]: Node } = {}
     const unvisited = new Set<string>();
 
@@ -192,10 +192,11 @@ function getNeighbor(map: Map, pos: Pos, dir: DIR) {
     return newTilePos;
 }
 
-function uniqueTilesPath(map: Map, nodes: Record<string, Node>, bestNode: Node) {
+type SimpleNode = { pos: Pos, previous: null | string[] };
+export function uniqueTilesPath(map: Map, nodes: Record<string, SimpleNode>, bestNode: SimpleNode) {
     const path = new Set<string>();
 
-    function _uniqueTilesPath(nodes: Record<string, Node>, bestNode: Node) {
+    function _uniqueTilesPath(nodes: Record<string, SimpleNode>, bestNode: SimpleNode) {
         if (bestNode.previous === null)
             return;
 
@@ -207,6 +208,8 @@ function uniqueTilesPath(map: Map, nodes: Record<string, Node>, bestNode: Node) 
     }
 
     _uniqueTilesPath(nodes, bestNode);
+
+    // render(map, path);
 
     return path.size + 1; // + 1 for the ending node
 }
