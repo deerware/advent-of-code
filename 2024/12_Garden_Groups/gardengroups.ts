@@ -2,7 +2,7 @@ import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
 import { randomUUID } from 'crypto';
-import cartesian, { PosD } from '../../helpers/cartesian';
+import cartesian, { PosD } from './d12_cartesian';
 
 // Not proud of today... Spaghetti 🍝
 
