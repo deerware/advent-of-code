@@ -42,12 +42,24 @@ async function part1(data: Data, size: number, take: number): Promise<string> {
 }
 
 async function part2(data: Data, size: number, take: number): Promise<string> {
+    let map = createMap(data.bytes.slice(0, take), size);
+    let path = pathfind(map);
+    let set = day16.uniqueTilesPath(map, path.nodes, path.best);
+
     for (let i = take + 1; i < data.bytes.length; i++) {
-        const map = createMap(data.bytes.slice(0, i), size);
-        const path = pathfind(map);
+        const current = data.bytes[i - 1];
+        const key = posKey(current);
+
+        if (!set.has(key))
+            continue;
+
+        map = createMap(data.bytes.slice(0, i), size);
+        path = pathfind(map);
 
         if (path.best === undefined)
-            return data.bytes[i - 1].reverse().join(','); // Reverse = r,c -> x,y
+            return current.reverse().join(','); // Reverse = r,c -> x,y
+
+        set = day16.uniqueTilesPath(map, path.nodes, path.best);
     }
 
     throw new Error('Solution not found.');
