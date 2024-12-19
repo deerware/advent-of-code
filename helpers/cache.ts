@@ -1,7 +1,7 @@
 type GetKeyFn<T extends any[]> = (...args: T) => string
 
 export default function cache<T extends any[], U>(fn: (...args: T) => U, keyFn: 'simple' | 'json' | GetKeyFn<T> = 'simple') {
-    const cache: { [key: string]: U } = {};
+    let cache: { [key: string]: U } = {};
     const getKey: GetKeyFn<T> = (() => {
         if (typeof keyFn === 'function')
             return keyFn;
@@ -12,7 +12,7 @@ export default function cache<T extends any[], U>(fn: (...args: T) => U, keyFn: 
         return (...args: T) => args.join('±'); // Chr(177), get it?
     })();
 
-    return (...args: T): U => {
+    const resultFn = (...args: T): U => {
         const key = getKey(...args);
 
         if (cache[key])
@@ -22,4 +22,12 @@ export default function cache<T extends any[], U>(fn: (...args: T) => U, keyFn: 
         cache[key] = result;
         return result;
     };
+
+    resultFn.clear = () => { cache = {}; };
+    resultFn.count = () => Object.keys(cache).length;
+    resultFn.get = (key: string) => cache[key];
+    resultFn.set = (key: string, value: U) => cache[key] = value;
+    resultFn.direct = fn;
+
+    return resultFn;
 }
