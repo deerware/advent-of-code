@@ -61,12 +61,12 @@ const session = fs.readFileSync('secrets/session.txt', 'utf-8').trimEnd();
 
     const tsContent = `import log from '../../log'
 import { colors } from '../../types'
-import * as global from '../../global';
+import * as g from '../../global';
 
 export default async function ${short}() {
     log('${fullname}');
 
-    await global.run('${path}', [
+    await g.run('${path}', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 0],
         ['Part 1', part1, 'input.txt', null],
         false,

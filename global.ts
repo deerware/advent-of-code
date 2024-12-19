@@ -5,16 +5,17 @@ import inputCrypt from './inputCrypt';
 
 let startDate: Date;
 
-type Entry<T, U extends any[], V> = [
+type Entry<I, E extends any[], R> = [
     name: string,
-    fn: ((data: T, ...extra: U) => V | Promise<V>),
+    fn: (data: I, ...extra: E) => R | Promise<R>,
     path: string,
-    expected: V | ((result: V) => boolean) | null,
-    ...extra: U
+    expected: R | ((result: R) => boolean) | null,
+    ...extra: E
 ];
 
-// FIXME each entry can have different extras !!!
-export async function run<T = string[], U extends any[] = [], V = number>(dayPath: string, entries: (Entry<T, U, V> | null | false)[], dataParser?: (data: string[]) => T) {
+export async function run<I, E extends any[], R>(dayPath: string, entries: (Entry<I, E, R> | null | false)[], dataParser?: (data: string[]) => I): Promise<void>;
+export async function run<I>(dayPath: string, entries: (Entry<I, any[], any> | null | false)[], dataParser: undefined | ((data: string[]) => I), noTypeCheck: true): Promise<void>;
+export async function run<I, E extends any[], R>(dayPath: string, entries: (Entry<I, any[], any> | null | false)[], dataParser?: (data: string[]) => I, noTypeCheck = false) {
     for (let entry of entries) {
         if (entry === null) {
             log();
@@ -42,6 +43,10 @@ export async function run<T = string[], U extends any[] = [], V = number>(dayPat
             break;
         }
     }
+}
+
+export function e<I, E extends any[], R>(...params: Entry<I, E, R>) {
+    return params;
 }
 
 export function logResult<V>(title: string, result: V, expected?: V | ((n: V) => boolean)) {

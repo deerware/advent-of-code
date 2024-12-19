@@ -1,22 +1,26 @@
 import log from '../../log'
 import { colors } from '../../types'
-import * as global from '../../global';
+import * as g from '../../global';
 import fs from 'fs';
 import * as day16 from '../16_Reindeer_Maze/reindeermaze';
 
 // Today's inspirations:
 // Day 16: Reindeer Maze
 
+function tplf<TS extends any[]>(...args: TS) {
+    return args;
+}
+
 export default async function ramrun() {
     log('Day 18: RAM Run');
 
-    await global.run('2024/18_RAM_Run', [
-        ['Part 1 test 1', part1, 'sampleData1.txt', '22', 7, 12],
-        ['Part 1', part1, 'input.txt', '318', 71, 1024],
+    await g.run('2024/18_RAM_Run', [
+        g.e('Part 1 test 1', part1, 'sampleData1.txt', 22, 7, 12),
+        g.e('Part 1', part1, 'input.txt', 318, 71, 1024),
         null,
-        ['Part 2 test 1', part2, 'sampleData1.txt', '6,1', 7, 12],
-        ['Part 2', part2, 'input.txt', '56,29', 71, 1024],
-    ], parseData);
+        g.e('Part 2 test 1', part2, 'sampleData1.txt', '6,1', 7, 12),
+        g.e('Part 2', part2, 'input.txt', '56,29', 71, 1024),
+    ], parseData, true);
 }
 
 type Data = ReturnType<typeof parseData>;
@@ -35,10 +39,10 @@ function parseData(_data: string[]) {
     return { bytes };
 }
 
-async function part1(data: Data, size: number, take: number): Promise<string> {
+async function part1(data: Data, size: number, take: number): Promise<number> {
     const map = createMap(data.bytes.slice(0, take), size);
     const path = pathfind(map);
-    return path.best.score.toString();
+    return path.best.score;
 }
 
 async function part2(data: Data, size: number, take: number): Promise<string> {
