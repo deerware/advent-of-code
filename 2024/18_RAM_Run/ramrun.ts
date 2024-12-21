@@ -5,7 +5,7 @@ import fs from 'fs';
 import * as day16 from '../16_Reindeer_Maze/reindeermaze';
 
 // Today's inspirations:
-// Day 16: Reindeer Maze
+// Day 16's Djikstra's
 
 function tplf<TS extends any[]>(...args: TS) {
     return args;
@@ -83,7 +83,7 @@ function createMap(bytes: Pos[], size: number) {
     return map;
 }
 
-function posKey(pos: Pos) {
+export function posKey(pos: Pos) {
     return `${pos[0]},${pos[1]}`;
 }
 

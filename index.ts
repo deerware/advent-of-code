@@ -17,6 +17,7 @@ import reindeermaze from './2024/16_Reindeer_Maze/reindeermaze';
 import chronospatialcomputer from './2024/17_Chronospatial_Computer/chronospatialcomputer';
 import ramrun from './2024/18_RAM_Run/ramrun';
 import linenlayout from './2024/19_Linen_Layout/linenlayout';
+import racecondition from './2024/20_Race_Condition/racecondition';
 import log from './log';
 
 (async () => {
@@ -39,7 +40,8 @@ import log from './log';
         // await reindeermaze();
         // await chronospatialcomputer(); // part 2 not finished
         // await ramrun();
-        await linenlayout();
+        // await linenlayout();
+        await racecondition();
     } catch (e) {
         log('Error:', (e as any).message);
     }

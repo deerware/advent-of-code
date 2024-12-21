@@ -45,8 +45,13 @@ export async function run<I, E extends any[], R>(dayPath: string, entries: (Entr
     }
 }
 
-export function e<I, E extends any[], R>(...params: Entry<I, E, R>) {
-    return params;
+export function e<I, E extends any[], R>(params: Entry<I, E, R>): Entry<I, E, R>
+export function e<I, E extends any[], R>(...params: Entry<I, E, R>): Entry<I, E, R>
+export function e<I, E extends any[], R>(...params: Entry<I, E, R> | [Entry<I, E, R>]): Entry<I, E, R> {
+    if (Array.isArray(params[0]) && params.length === 1)
+        return params[0];
+
+    return params as any;
 }
 
 export function logResult<V>(title: string, result: V, expected?: V | ((n: V) => boolean)) {
