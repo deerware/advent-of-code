@@ -7,37 +7,39 @@ export default async function caloriecounting() {
 
     await g.run('2022/01_Calorie_Counting', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 24000],
-        ['Part 1', part1, 'input.txt', null],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 1', part1, 'input.txt', 70509],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 45000],
+        ['Part 2', part2, 'input.txt', 208567],
     ], parseData);
 }
 
 type Data = ReturnType<typeof parseData>;
 function parseData(_data: string[]) {
-    let calories: number[] = [];
-    const totals: number[][] = [];
+    let calories: number = 0;
+    const totals: number[] = [];
 
     for (const line of _data) {
         if (line === '') {
             totals.push(calories);
-            calories = [];
+            calories = 0
             continue;
         }
-        calories.push(parseInt(line, 10));
+        calories += parseInt(line);
     }
-    if (calories.length)
+
+    if (calories)
         totals.push(calories);
 
     return totals;
 }
 
 async function part1(data: Data): Promise<number> {
-    return data.reduce((max, cur) =>
-        Math.max(cur.reduce((a, b) => a + b, 0), max), -Infinity);
+    return Math.max(...data);
 }
 
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
+async function part2(_data: Data): Promise<number> {
+    const data = _data.sort((a, b) => b - a);
+
+    return data[0] + data[1] + data[2];
 }
