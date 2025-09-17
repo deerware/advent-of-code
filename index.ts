@@ -18,6 +18,7 @@ import chronospatialcomputer from './2024/17_Chronospatial_Computer/chronospatia
 import ramrun from './2024/18_RAM_Run/ramrun';
 import linenlayout from './2024/19_Linen_Layout/linenlayout';
 import racecondition from './2024/20_Race_Condition/racecondition';
+import keypadconundrum from './2024/21_Keypad_Conundrum/keypadconundrum';
 import log from './log';
 
 (async () => {
@@ -41,7 +42,8 @@ import log from './log';
         // await chronospatialcomputer(); // part 2 not finished
         // await ramrun();
         // await linenlayout();
-        await racecondition();
+        // await racecondition(); // part 1 not finished
+        await keypadconundrum();
     } catch (e) {
         log('Error:', (e as any).message);
     }
