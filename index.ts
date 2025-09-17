@@ -1,11 +1,13 @@
 import caloriecounting from './2022/01_Calorie_Counting/caloriecounting';
 import rockpaperscissors from './2022/02_Rock_Paper_Scissors/rockpaperscissors';
+import rucksackreorganization from './2022/03_Rucksack_Reorganization/rucksackreorganization';
 import log from './log';
 
 (async () => {
     try {
         // await caloriecounting();
-        await rockpaperscissors();
+        // await rockpaperscissors();
+        await rucksackreorganization();
     } catch (e) {
         log('Error:', (e as any).message);
     }
