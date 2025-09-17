@@ -8,22 +8,16 @@ export default async function rucksackreorganization() {
     await g.run('2022/03_Rucksack_Reorganization', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 157],
         ['Part 1', part1, 'input.txt', 8039],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 70],
+        ['Part 2', part2, 'input.txt', 2510],
     ], parseData);
 }
 
 type Data = ReturnType<typeof parseData>;
 function parseData(_data: string[]) {
-    return _data;
-}
-
-async function part1(data: Data): Promise<number> {
-    let common: string[] = [];
-
-    for (const line of data) {
-        const _common: string[] = [];
+    return _data.map(line => {
+        const common: string[] = [];
 
         if (line.length % 2 !== 0)
             throw new Error('Line length is not even: ' + line);
@@ -34,17 +28,39 @@ async function part1(data: Data): Promise<number> {
 
         for (const char of first)
             if (second.includes(char))
-                if (!_common.includes(char))
-                    _common.push(char);
+                if (!common.includes(char))
+                    common.push(char);
 
-        common.push(..._common);
-    }
+        return { line, common };
+    });
+}
+
+async function part1(data: Data): Promise<number> {
+    let common: string[] = [];
+
+    for (const line of data)
+        common.push(...line.common);
 
     return common.reduce((sum, char) => sum + getPriority(char), 0);
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    if (data.length % 3 !== 0)
+        throw new Error('Data length is not multiple of 3: ' + data.length);
+
+    let sum = 0;
+
+    for (let i = 0; i < data.length; i += 3) {
+        const group = data.slice(i, i + 3);
+
+        for (const char of group[0].line)
+            if (group[1].line.includes(char) && group[2].line.includes(char)) {
+                sum += getPriority(char);
+                break;
+            }
+    }
+
+    return sum;
 }
 
 function getPriority(char: string): number {
