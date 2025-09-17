@@ -7,10 +7,10 @@ export default async function rockpaperscissors() {
 
     await g.run('2022/02_Rock_Paper_Scissors', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 15],
-        ['Part 1', part1, 'input.txt', null],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 1', part1, 'input.txt', 15632],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 12],
+        ['Part 2', part2, 'input.txt', 14416],
     ], parseData);
 }
 
@@ -19,6 +19,8 @@ enum RPS {
     Paper = 2,
     Scissors = 3,
 }
+
+type Match = { them: RPS, us: RPS };
 
 function toRPS(char: string): RPS {
     switch (char) {
@@ -36,37 +38,83 @@ function toRPS(char: string): RPS {
     throw new Error(`Invalid RPS character: ${char}`);
 }
 
+function matchScore(match: Match): number {
+    let score = 0;
+    if (match.us === match.them)
+        score += 3;
+
+    if (
+        (match.us === RPS.Rock && match.them === RPS.Scissors) ||
+        (match.us === RPS.Paper && match.them === RPS.Rock) ||
+        (match.us === RPS.Scissors && match.them === RPS.Paper)
+    )
+        score += 6;
+
+    return score + match.us;
+}
+
 type Data = ReturnType<typeof parseData>;
 function parseData(_data: string[]) {
-    const matches = [];
-
-    for (const line of _data) {
-        const match = {
-            them: toRPS(line[0]),
-            us: toRPS(line[2])
-        }
-
-        let score = 0;
-        if (match.us === match.them)
-            score += 3;
-
-        if (
-            (match.us === RPS.Rock && match.them === RPS.Scissors) ||
-            (match.us === RPS.Paper && match.them === RPS.Rock) ||
-            (match.us === RPS.Scissors && match.them === RPS.Paper)
-        )
-            score += 6;
-
-        matches.push({ ...match, score: score + match.us });
-    }
-
-    return matches;
+    return _data;
 }
 
 async function part1(data: Data): Promise<number> {
-    return data.reduce((a, b) => a + b.score, 0);
+    const matches: Match[] = [];
+    for (const line of data)
+        matches.push({
+            them: toRPS(line[0]),
+            us: toRPS(line[2])
+        });
+
+    return matches.reduce((sum, match) => sum + matchScore(match), 0);
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    const matches: Match[] = [];
+    for (const line of data) {
+        const them = toRPS(line[0]);
+        const strategy = line[2];
+
+        if (strategy === 'Y') { // draw
+            matches.push({ them, us: them });
+            continue;
+        }
+
+        if (strategy === 'X') { // lose
+            let us: RPS;
+            switch (them) {
+                case RPS.Rock:
+                    us = RPS.Scissors;
+                    break;
+                case RPS.Paper:
+                    us = RPS.Rock;
+                    break;
+                case RPS.Scissors:
+                    us = RPS.Paper;
+                    break;
+            }
+            matches.push({ them, us });
+            continue;
+        }
+
+        // win
+        let us: RPS;
+        switch (them) {
+            case RPS.Rock:
+                us = RPS.Paper;
+                break;
+            case RPS.Paper:
+                us = RPS.Scissors;
+                break;
+            case RPS.Scissors:
+                us = RPS.Rock;
+                break;
+        }
+
+        const match = { them, us }
+
+        matches.push(match);
+    }
+
+    return matches.reduce((sum, match) => sum + matchScore(match), 0);
 }
