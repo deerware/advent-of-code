@@ -2,6 +2,7 @@ import caloriecounting from './2022/01_Calorie_Counting/caloriecounting';
 import rockpaperscissors from './2022/02_Rock_Paper_Scissors/rockpaperscissors';
 import rucksackreorganization from './2022/03_Rucksack_Reorganization/rucksackreorganization';
 import campcleanup from './2022/04_Camp_Cleanup/campcleanup';
+import supplystacks from './2022/05_Supply_Stacks/supplystacks';
 import log from './log';
 
 (async () => {
@@ -9,7 +10,8 @@ import log from './log';
         // await caloriecounting();
         // await rockpaperscissors();
         // await rucksackreorganization();
-        await campcleanup();
+        // await campcleanup();
+        await supplystacks();
     } catch (e) {
         log('Error:', (e as any).message);
     }
