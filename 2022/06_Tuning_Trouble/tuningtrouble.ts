@@ -11,14 +11,14 @@ export default async function tuningtrouble() {
         ['Part 1 test 3', part1, 'sampleData3.txt', 6],
         ['Part 1 test 4', part1, 'sampleData4.txt', 10],
         ['Part 1 test 5', part1, 'sampleData5.txt', 11],
-        ['Part 1', part1, 'input.txt', null],
-        false,
+        ['Part 1', part1, 'input.txt', 1929],
+        null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 19],
         ['Part 2 test 2', part2, 'sampleData2.txt', 23],
         ['Part 2 test 3', part2, 'sampleData3.txt', 23],
         ['Part 2 test 4', part2, 'sampleData4.txt', 29],
         ['Part 2 test 5', part2, 'sampleData5.txt', 26],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 3298],
     ], parseData);
 }
 
@@ -31,8 +31,16 @@ function parseData(_data: string[]) {
 }
 
 async function part1(data: Data): Promise<number> {
-    for (let i = 4; i < data.length; i++) {
-        const part = data.substring(i - 4, i);
+    return findStart(data, 4);
+}
+
+async function part2(data: Data): Promise<number> {
+    return findStart(data, 14);
+}
+
+async function findStart(data: Data, count: number): Promise<number> {
+    for (let i = count; i < data.length; i++) {
+        const part = data.substring(i - count, i);
 
         let gut = true;
         for (let j = 1; j <= part.length; j++)
@@ -45,9 +53,5 @@ async function part1(data: Data): Promise<number> {
             return i;
     }
 
-    return -Infinity;
-}
-
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    throw "Not found";
 }
