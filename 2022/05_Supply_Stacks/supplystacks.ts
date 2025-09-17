@@ -10,7 +10,7 @@ export default async function supplystacks() {
         ['Part 1', part1, 'input.txt', "CWMTGHBDW"],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', "MCD"],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', "SSCGWJCRB"],
     ], parseData);
 }
 
