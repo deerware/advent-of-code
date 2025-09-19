@@ -4,6 +4,7 @@ import rucksackreorganization from './2022/03_Rucksack_Reorganization/rucksackre
 import campcleanup from './2022/04_Camp_Cleanup/campcleanup';
 import supplystacks from './2022/05_Supply_Stacks/supplystacks';
 import tuningtrouble from './2022/06_Tuning_Trouble/tuningtrouble';
+import nospaceleftondevice from './2022/07_No_Space_Left_On_Device/nospaceleftondevice';
 import log from './log';
 
 (async () => {
@@ -13,7 +14,8 @@ import log from './log';
         // await rucksackreorganization();
         // await campcleanup();
         // await supplystacks();
-        await tuningtrouble();
+        // await tuningtrouble();
+        await nospaceleftondevice();
     } catch (e) {
         log('Error:', (e as any).message);
     }
