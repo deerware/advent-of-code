@@ -1,6 +1,6 @@
 type GetKeyFn<T extends any[]> = (...args: T) => string
 
-export default function cache<T extends any[], U>(fn: (...args: T) => U, keyFn: 'simple' | 'json' | GetKeyFn<T> = 'simple') {
+export default function memoize<T extends any[], U>(fn: (...args: T) => U, keyFn: 'simple' | 'json' | GetKeyFn<T> = 'simple') {
     let cache: { [key: string]: U } = {};
     const getKey: GetKeyFn<T> = (() => {
         if (typeof keyFn === 'function')

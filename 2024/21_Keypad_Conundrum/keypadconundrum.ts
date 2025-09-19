@@ -1,7 +1,7 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as g from '../../global';
-import cache from '../../helpers/cache';
+import memoize from '../../helpers/memoize';
 
 export default async function keypadconundrum() {
     log('Day 21: Keypad Conundrum');

@@ -1,7 +1,7 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
-import cache from '../../helpers/cache';
+import memoize from '../../helpers/memoize';
 
 export default async function plutonianpebbles() {
     log('Day 11: Plutonian Pebbles');
@@ -27,7 +27,7 @@ async function part1(data: Data, blinktimes: number = 25): Promise<number> {
 }
 
 // const count = cache(_count);
-const count = cache(_count, (stone, blink) => `${stone}-${blink}`); // faster by 30ms for some reason
+const count = memoize(_count, (stone, blink) => `${stone}-${blink}`); // faster by 30ms for some reason
 function _count(stone: number, blink: number): number {
     const stoneStr = stone.toString();
     const nextB = blink - 1;

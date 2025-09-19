@@ -1,7 +1,7 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as global from '../../global';
-import cache from '../../helpers/cache';
+import memoize from '../../helpers/memoize';
 
 export default async function linenlayout() {
     log('Day 19: Linen Layout');
@@ -46,7 +46,7 @@ async function part2(data: Data): Promise<number> {
     return variants;
 }
 
-const evaluate = cache(_evaluate, (design) => design);
+const evaluate = memoize(_evaluate, (design) => design);
 function _evaluate(design: string, available: string[]) {
     if (design === '')
         return 1;
