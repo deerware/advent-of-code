@@ -10,9 +10,9 @@ export default async function nospaceleftondevice() {
     await g.run('2022/07_No_Space_Left_On_Device', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 95437],
         ['Part 1', part1, 'input.txt', 1491614],
-        false,
+        null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 24933642],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 6400111],
     ], parseData);
 }
 
@@ -81,5 +81,31 @@ async function part1(data: Data): Promise<number> {
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    const TOTAL_SPACE = 70000000;
+    const REQ_SPACE = 30000000;
+    const TAKEN_SPACE = Object.values(data.fileSizes).reduce((a, b) => a + b, 0);
+    const AVAILABLE_SPACE = TOTAL_SPACE - TAKEN_SPACE;
+    const NEEDED_SPACE = REQ_SPACE - AVAILABLE_SPACE;
+
+    if (NEEDED_SPACE < 0)
+        throw 'Bad input';
+
+    let bestCandidate = Infinity;
+
+    for (const dir of Array.from(data.uniqueDirectories)) {
+        let dirTotal = 0;
+        for (const path of Object.keys(data.fileSizes)) {
+            if (path.startsWith(dir))
+                dirTotal += data.fileSizes[path];
+        }
+
+        if (dirTotal >= NEEDED_SPACE)
+            if (dirTotal < bestCandidate)
+                bestCandidate = dirTotal;
+    }
+
+    if (bestCandidate === Infinity)
+        throw 'No folders big enough.'
+
+    return bestCandidate;
 }
