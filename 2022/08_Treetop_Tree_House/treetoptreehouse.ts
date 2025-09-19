@@ -10,7 +10,7 @@ export default async function treetoptreehouse() {
         ['Part 1', part1, 'input.txt', 1695],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 8],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 287040],
     ], parseData);
 }
 
@@ -33,8 +33,21 @@ async function part1(data: Data): Promise<number> {
     return visible;
 }
 
+
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    let bestScore = 0;
+
+    for (let r = 0; r < data.length; r++) {
+        const row = data[r];
+
+        for (let c = 0; c < row.length; c++) {
+            const score = getScore(data, row, r, c);
+            if (score > bestScore)
+                bestScore = score;
+        }
+    }
+
+    return bestScore;
 }
 
 function isVisible(data: Data, row: number[], r: number, c: number) {
@@ -46,30 +59,74 @@ function isVisible(data: Data, row: number[], r: number, c: number) {
 
     const height = data[r][c];
 
-    if (Math.max(...row.slice(0, c)) < height) {
-        // console.log("test 1", [...row.slice(0, c)])
+    if (Math.max(...row.slice(0, c)) < height)
         return true;
-    }
 
-    if (Math.max(...row.slice(c + 1)) < height) {
-        // console.log("test 2", [...row.slice(c + 1)])
+    if (Math.max(...row.slice(c + 1)) < height)
         return true;
-    }
 
     const column = [];
-
     for (let i = 0; i < data.length; i++)
         column.push(data[i][c]);
 
-    if (Math.max(...column.slice(0, r)) < height) {
-        // console.log("test 3", [...column.slice(0, r)])
+    if (Math.max(...column.slice(0, r)) < height)
         return true;
-    }
 
-    if (Math.max(...column.slice(r + 1)) < height) {
-        // console.log("test 4", [...column.slice(r + 1)])
+    if (Math.max(...column.slice(r + 1)) < height)
         return true;
-    }
 
     return false;
+}
+
+function getScore(data: Data, row: number[], r: number, c: number) {
+    const height = data[r][c];
+
+    let score = 0;
+
+    // left
+    for (let i = c - 1; i >= 0; i--) {
+        score++;
+
+        if (row[i] >= height)
+            break;
+    }
+
+    // right
+    let currentScore = 0;
+    for (let i = c + 1; i < row.length; i++) {
+        currentScore++;
+
+        if (row[i] >= height)
+            break;
+    }
+
+    score *= currentScore;
+    currentScore = 0;
+
+    const column = [];
+    for (let i = 0; i < data.length; i++)
+        column.push(data[i][c]);
+
+    // top
+    for (let i = r - 1; i >= 0; i--) {
+        currentScore++;
+
+        if (column[i] >= height)
+            break;
+    }
+
+    score *= currentScore;
+    currentScore = 0;
+
+    // bottom
+    for (let i = r + 1; i < column.length; i++) {
+        currentScore++;
+
+        if (column[i] >= height)
+            break;
+    }
+
+    score *= currentScore;
+
+    return score;
 }
