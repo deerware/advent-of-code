@@ -39,12 +39,12 @@ function parseData(_data: string[]) {
         }
 
         i++;
-        const testLine = z.tuple([
+        const divisor = z.tuple([
             z.literal('  Test: divisible'),
             z.coerce.number()
-        ]).parse(_data[i].split(' by '));
+        ]).parse(_data[i].split(' by '))[1];
 
-        const test = (worry: number) => worry % testLine[1] === 0;
+        const test = (worry: number) => worry % divisor === 0;
 
         i++;
         const ifTrueThrowTo = z.tuple([
@@ -62,20 +62,24 @@ function parseData(_data: string[]) {
 
         const throwTo = (worry: number) => test(worry) ? ifTrueThrowTo : ifFalseThrowTo;
 
-        monkeys.push({ items, operation, test, throwTo, ifTrueThrowTo, ifFalseThrowTo, noOfInspections: 0 });
+        monkeys.push({ items, operation, test, throwTo, ifTrueThrowTo, ifFalseThrowTo, noOfInspections: 0, divisor });
     }
 
     return monkeys;
 }
 
 async function part1(data: Data, calm = true, rounds = 20): Promise<number> {
+    let div = 1;
+    for (const m of data)
+        div *= m.divisor;
+
     for (let i = 0; i < rounds; i++) {
         for (let m = 0; m < data.length; m++) {
             const monkey = data[m];
             for (const item of monkey.items) {
                 const newItem = calm ? Math.floor(monkey.operation(item) / 3) : monkey.operation(item);
                 const to = monkey.throwTo(newItem);
-                data[to].items.push(newItem);
+                data[to].items.push(newItem % div);
                 monkey.noOfInspections++;
             }
             monkey.items = [];
