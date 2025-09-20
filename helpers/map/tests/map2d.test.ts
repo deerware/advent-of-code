@@ -1,6 +1,6 @@
 // map2D.test.ts
 import { describe, it, expect } from 'vitest';
-import * as map2D from './map2D';
+import * as map2D from '../map2D';
 
 describe('dirFrom', () => {
     it('maps string keys without uppercasing', () => {

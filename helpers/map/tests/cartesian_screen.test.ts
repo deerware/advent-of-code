@@ -1,8 +1,8 @@
 // cartesian_screen.test.ts
 import { describe, it, expect } from 'vitest';
-import * as map2D from './map2D';
-import * as cartesian from './cartesian';
-import * as screen from './screen';
+import * as map2D from '../map2D';
+import * as cartesian from '../cartesian';
+import * as screen from '../screen';
 
 describe('module re-exports', () => {
     it('re-exports DIR/DIR_DIAG/DIR8 and parsers consistently', () => {
