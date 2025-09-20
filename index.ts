@@ -6,6 +6,7 @@ import supplystacks from './2022/05_Supply_Stacks/supplystacks';
 import tuningtrouble from './2022/06_Tuning_Trouble/tuningtrouble';
 import nospaceleftondevice from './2022/07_No_Space_Left_On_Device/nospaceleftondevice';
 import treetoptreehouse from './2022/08_Treetop_Tree_House/treetoptreehouse';
+import ropebridge from './2022/09_Rope_Bridge/ropebridge';
 import log from './log';
 
 (async () => {
@@ -17,7 +18,8 @@ import log from './log';
         // await supplystacks();
         // await tuningtrouble();
         // await nospaceleftondevice();
-        await treetoptreehouse();
+        // await treetoptreehouse();
+        await ropebridge();
     } catch (e) {
         log('Error:', (e as any).message);
     }
