@@ -8,11 +8,11 @@ export default async function ropebridge() {
     log('Day 9: Rope Bridge');
 
     await g.run('2022/09_Rope_Bridge', [
-        ['Part 1 test 1', part1, 'sampleData1.txt', 13],
-        ['Part 1', part1, 'input.txt', n => n > 6339],
+        ['Part 1 test 1', part0, 'sampleData1.txt', 13],
+        ['Part 1', part0, 'input.txt', 6339],
         null,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 36],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2 test 1', part0, 'sampleData2.txt', 36, 9],
+        ['Part 2', part0, 'input.txt', 2541, 9],
     ], parseData);
 }
 
@@ -24,29 +24,33 @@ function parseData(_data: string[]) {
     }));
 }
 
-async function part1(data: Data): Promise<number> {
+async function part0(data: Data, noOfKnots = 1): Promise<number> {
     let posH: Pos = [0, 0];
-    let posT: Pos = [0, 0];
+
+    const tailPos: Pos[] = []
+    for (let i = 0; i < noOfKnots; i++)
+        tailPos.push([0, 0]);
 
     const posStr = (pos: Pos) => `x${pos[0]}y${pos[1]}`;
 
     const uniquePos = new Set<string>();
-    uniquePos.add(posStr(posT));
+    uniquePos.add(posStr(tailPos[noOfKnots - 1]));
 
     for (const line of data) {
         for (let i = 0; i < line.count; i++) {
             posH = cartesian.move(posH, line.dir);
 
-            posT = catchUp(posH, posT);
-            uniquePos.add(posStr(posT));
+            for (let i = 0; i < noOfKnots; i++)
+                if (i == 0)
+                    tailPos[i] = catchUp(posH, tailPos[i]);
+                else
+                    tailPos[i] = catchUp(tailPos[i - 1], tailPos[i]);
+
+            uniquePos.add(posStr(tailPos[noOfKnots - 1]));
         }
     }
 
     return uniquePos.size;
-}
-
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
 }
 
 function catchUp(posH: Pos, posT: Pos): Pos {
