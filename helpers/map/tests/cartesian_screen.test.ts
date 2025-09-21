@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import * as map2D from '../map2D';
 import * as cartesian from '../cartesian';
-import * as screen from '../screen';
+import * as grid from '../grid';
 
 describe('module re-exports', () => {
     it('re-exports DIR/DIR_DIAG/DIR8 and parsers consistently', () => {
@@ -16,8 +16,8 @@ describe('module re-exports', () => {
         expect(cartesian.dirFromArrows).toBe(map2D.dirFromArrows);
 
         // Same for screen
-        expect(screen.DIR.UP).toBe(map2D.DIR.UP);
-        expect(screen.dirFromArrows).toBe(map2D.dirFromArrows);
+        expect(grid.DIR.UP).toBe(map2D.DIR.UP);
+        expect(grid.dirFromArrows).toBe(map2D.dirFromArrows);
     });
 });
 
@@ -48,19 +48,19 @@ describe('cartesian.move uses Axis.Cartesian semantics', () => {
 
 describe('screen.move uses Axis.Screen semantics', () => {
     it('UP decreases y by -1 (screen coords)', () => {
-        expect(screen.move([0, 0], map2D.DIR.UP)).toEqual([0, -1]);
+        expect(grid.move([0, 0], map2D.DIR.UP)).toEqual([0, -1]);
     });
 
     it('DOWN increases y by +1 (screen coords)', () => {
-        expect(screen.move([0, 0], map2D.DIR.DOWN, 4)).toEqual([0, 4]);
+        expect(grid.move([0, 0], map2D.DIR.DOWN, 4)).toEqual([0, 4]);
     });
 
     it('RIGHT and LEFT affect x only', () => {
-        expect(screen.move([5, 5], map2D.DIR.RIGHT, 2)).toEqual([7, 5]);
-        expect(screen.move([5, 5], map2D.DIR.LEFT, 3)).toEqual([2, 5]);
+        expect(grid.move([5, 5], map2D.DIR.RIGHT, 2)).toEqual([7, 5]);
+        expect(grid.move([5, 5], map2D.DIR.LEFT, 3)).toEqual([2, 5]);
     });
 
     it('diagonals reflect screen orientation', () => {
-        expect(screen.move([10, 10], map2D.DIR8.UP_RIGHT, 3)).toEqual([13, 7]);
+        expect(grid.move([10, 10], map2D.DIR8.UP_RIGHT, 3)).toEqual([13, 7]);
     });
 });

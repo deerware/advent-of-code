@@ -1,8 +1,8 @@
 export enum Axis {
     /** Cartesian = x → right, y ↑ up */
     Cartesian,
-    /** Screen = x → right, y ↓ down */
-    Screen,
+    /** Grid = x → right, y ↓ down */
+    Grid,
 }
 
 export enum DIR {
@@ -92,7 +92,7 @@ export function move(
     axis: Axis = Axis.Cartesian
 ): Pos {
     // In Grid mode we flip the sign of "vertical" motion.
-    const vert = (dy: number) => axis === Axis.Screen ? -dy : dy;
+    const vert = (dy: number) => axis === Axis.Grid ? -dy : dy;
 
     switch (dir) {
         case DIR8.UP:
@@ -153,7 +153,7 @@ function yDir(y: number, axis: Axis): DIR8 {
     if (axis == Axis.Cartesian)
         return y > 0 ? DIR8.UP : DIR8.DOWN;
 
-    if (axis == Axis.Screen)
+    if (axis == Axis.Grid)
         return y > 0 ? DIR8.DOWN : DIR8.UP;
 
     throw 'Unimplemented axis';
@@ -181,4 +181,12 @@ export function dir(pos1: Pos, pos2: Pos, axis: Axis): DIR8 | null {
         return DIR8.UP_LEFT
     else
         return DIR8.DOWN_LEFT
+}
+
+export function posKey(pos: Pos) {
+    return `x${pos[0]}y${pos[1]}`;
+}
+
+export function isWithinBounds(pos: Pos, xDim: number, yDim: number) {
+    return pos[0] >= 0 && pos[0] < xDim && pos[1] >= 0 && pos[1] < yDim;
 }

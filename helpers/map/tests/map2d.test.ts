@@ -90,7 +90,7 @@ describe('move (Axis.Cartesian: x→right, y↑up)', () => {
 });
 
 describe('move (Axis.Screen: x→right, y↓down)', () => {
-    const axis = map2D.Axis.Screen as const;
+    const axis = map2D.Axis.Grid as const;
 
     it('inverts vertical sign compared to Cartesian', () => {
         expect(map2D.move([0, 0], map2D.DIR.UP, 1, axis)).toEqual([0, -1]);
