@@ -38,8 +38,8 @@ function dijkstras<T>(startTile: T, startKey: string, getNext: (current: PathNod
             if (existing && existing.score > score) {
                 existing.score = score;
                 existing.parent = node;
+                queue.push(nextKey);
             }
-            queue.push(nextKey);
         }
     }
 
