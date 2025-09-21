@@ -190,3 +190,11 @@ export function posKey(pos: Pos) {
 export function isWithinBounds(pos: Pos, xDim: number, yDim: number) {
     return pos[0] >= 0 && pos[0] < xDim && pos[1] >= 0 && pos[1] < yDim;
 }
+
+export function forEach<T>(map: T[][], callback: ((tile: T, pos: Pos) => boolean | void)) {
+    for (let y = 0; y < map.length; y++) {
+        const row = map[y];
+        for (let x = 0; x < row.length; x++)
+            callback(row[x], [x, y]);
+    }
+}

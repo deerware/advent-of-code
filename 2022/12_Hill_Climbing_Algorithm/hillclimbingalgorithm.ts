@@ -11,7 +11,7 @@ export default async function hillclimbingalgorithm() {
         ['Part 1', part1, 'input.txt', 383],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 29],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 377],
     ], parseData);
 }
 
@@ -81,10 +81,7 @@ async function part1({ map, start, target }: Data): Promise<number> {
 
             const nKey = posKey(nPos);
             const existing = nodeMap[nKey];
-            if (existing && existing.distance <= distance) {
-                existing.distance = distance;
-                existing.parent = node;
-            } else {
+            if (!existing) {
                 nodeMap[nKey] = {
                     pos: nPos,
                     key: nKey,
@@ -93,15 +90,79 @@ async function part1({ map, start, target }: Data): Promise<number> {
                 }
                 queue.push(nKey);
             }
+            if (existing && existing.distance > distance) {
+                existing.distance = distance;
+                existing.parent = node;
+            }
         }
     }
-
-    // console.log(nodeMap);
-    // console.log(nodeMap[posKey(target)]);
 
     return nodeMap[posKey(target)].distance;
 }
 
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
+async function part2({ map, target }: Data): Promise<number> {
+    const mapSize: [number, number] = [map[0].length, map.length];
+
+    type Node = {
+        pos: Pos,
+        key: string,
+        parent: Node | null,
+        distance: number,
+    }
+    const nodeMap: { [posKey: string]: Node } = {};
+
+    const targetKey = posKey(target);
+    const queue = [targetKey];
+
+    nodeMap[targetKey] = { pos: target, key: targetKey, parent: null, distance: 0 };
+
+    let nextPos;
+    while (nextPos = queue.shift()) {
+        const node = nodeMap[nextPos];
+
+        const height = map[node.pos[1]][node.pos[0]];
+
+        for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
+            const nPos = move(node.pos, dir);
+            if (!isWithinBounds(nPos, ...mapSize))
+                continue;
+
+            const nHeight = map[nPos[1]][nPos[0]];
+            if (height - nHeight > 1)
+                continue;
+
+            const distance = node.distance + 1;
+
+            const nKey = posKey(nPos);
+            const existing = nodeMap[nKey];
+            if (!existing) {
+                nodeMap[nKey] = {
+                    pos: nPos,
+                    key: nKey,
+                    parent: node,
+                    distance,
+                }
+                queue.push(nKey);
+            }
+            if (existing && existing.distance > distance) {
+                existing.distance = distance;
+                existing.parent = node;
+            }
+        }
+    }
+
+    let lowest = Infinity;
+    for (let y = 0; y < map.length; y++) {
+        const row = map[y];
+
+        for (let x = 0; x < row.length; x++)
+            if (row[x] === 1) {
+                const key = posKey([x, y]);
+
+                if (nodeMap[key] && nodeMap[key].distance < lowest)
+                    lowest = nodeMap[key].distance
+            }
+    }
+
+    return lowest;
 }
