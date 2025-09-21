@@ -10,6 +10,7 @@ import ropebridge from './2022/09_Rope_Bridge/ropebridge';
 import cathoderaytube from './2022/10_Cathode_Ray_Tube/cathoderaytube';
 import monkeyinthemiddle from './2022/11_Monkey_in_the_Middle/monkeyinthemiddle';
 import hillclimbingalgorithm from './2022/12_Hill_Climbing_Algorithm/hillclimbingalgorithm';
+import distresssignal from './2022/13_Distress_Signal/distresssignal';
 import log from './log';
 
 (async () => {
@@ -25,7 +26,8 @@ import log from './log';
         // await ropebridge();
         // await cathoderaytube();
         // await monkeyinthemiddle();
-        await hillclimbingalgorithm();
+        // await hillclimbingalgorithm();
+        await distresssignal();
     } catch (e) {
         log('Error:', (e as any).message);
     }
