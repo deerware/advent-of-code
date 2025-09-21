@@ -1,7 +1,9 @@
 import log from '../../log'
 import { colors } from '../../types'
 import * as g from '../../global';
+import * as grid from '../../helpers/map/grid';
 import { DIR, isWithinBounds, move, Pos, posKey } from '../../helpers/map/grid';
+import dijkstras, { NextNode } from '../../helpers/map/path/dijkstras';
 
 export default async function hillclimbingalgorithm() {
     log('Day 12: Hill Climbing Algorithm');
@@ -49,27 +51,11 @@ function parseData(_data: string[]) {
 async function part1({ map, start, target }: Data): Promise<number> {
     const mapSize: [number, number] = [map[0].length, map.length];
 
-    type Node = {
-        pos: Pos,
-        key: string,
-        parent: Node | null,
-        distance: number,
-    }
-    const nodeMap: { [posKey: string]: Node } = {};
-
-    const startKey = posKey(start);
-    const queue = [startKey];
-
-    nodeMap[startKey] = { pos: start, key: startKey, parent: null, distance: 0 };
-
-    let nextPos;
-    while (nextPos = queue.shift()) {
-        const node = nodeMap[nextPos];
-
-        const height = map[node.pos[1]][node.pos[0]];
-
+    const nodeMap = dijkstras.xy(start, (current) => {
+        const next: Pos[] = [];
+        const height = map[current.tile[1]][current.tile[0]];
         for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
-            const nPos = move(node.pos, dir);
+            const nPos = move(current.tile, dir);
             if (!isWithinBounds(nPos, ...mapSize))
                 continue;
 
@@ -77,53 +63,23 @@ async function part1({ map, start, target }: Data): Promise<number> {
             if (nHeight - height > 1)
                 continue;
 
-            const distance = node.distance + 1;
-
-            const nKey = posKey(nPos);
-            const existing = nodeMap[nKey];
-            if (!existing) {
-                nodeMap[nKey] = {
-                    pos: nPos,
-                    key: nKey,
-                    parent: node,
-                    distance,
-                }
-                queue.push(nKey);
-            }
-            if (existing && existing.distance > distance) {
-                existing.distance = distance;
-                existing.parent = node;
-            }
+            next.push(nPos);
         }
-    }
 
-    return nodeMap[posKey(target)].distance;
+        return next;
+    });
+
+    return nodeMap[posKey(target)].score;
 }
 
-async function part2({ map, target }: Data): Promise<number> {
+async function part2({ map, start, target }: Data): Promise<number> {
     const mapSize: [number, number] = [map[0].length, map.length];
 
-    type Node = {
-        pos: Pos,
-        key: string,
-        parent: Node | null,
-        distance: number,
-    }
-    const nodeMap: { [posKey: string]: Node } = {};
-
-    const targetKey = posKey(target);
-    const queue = [targetKey];
-
-    nodeMap[targetKey] = { pos: target, key: targetKey, parent: null, distance: 0 };
-
-    let nextPos;
-    while (nextPos = queue.shift()) {
-        const node = nodeMap[nextPos];
-
-        const height = map[node.pos[1]][node.pos[0]];
-
+    const nodeMap = dijkstras.xy(target, (current) => {
+        const next: Pos[] = [];
+        const height = map[current.tile[1]][current.tile[0]];
         for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
-            const nPos = move(node.pos, dir);
+            const nPos = move(current.tile, dir);
             if (!isWithinBounds(nPos, ...mapSize))
                 continue;
 
@@ -131,38 +87,21 @@ async function part2({ map, target }: Data): Promise<number> {
             if (height - nHeight > 1)
                 continue;
 
-            const distance = node.distance + 1;
-
-            const nKey = posKey(nPos);
-            const existing = nodeMap[nKey];
-            if (!existing) {
-                nodeMap[nKey] = {
-                    pos: nPos,
-                    key: nKey,
-                    parent: node,
-                    distance,
-                }
-                queue.push(nKey);
-            }
-            if (existing && existing.distance > distance) {
-                existing.distance = distance;
-                existing.parent = node;
-            }
+            next.push(nPos);
         }
-    }
+
+        return next;
+    });
 
     let lowest = Infinity;
-    for (let y = 0; y < map.length; y++) {
-        const row = map[y];
+    grid.forEach(map, (tile, pos) => {
+        if (tile !== 1)
+            return;
 
-        for (let x = 0; x < row.length; x++)
-            if (row[x] === 1) {
-                const key = posKey([x, y]);
-
-                if (nodeMap[key] && nodeMap[key].distance < lowest)
-                    lowest = nodeMap[key].distance
-            }
-    }
+        const key = posKey(pos);
+        if (nodeMap[key] && nodeMap[key].score < lowest)
+            lowest = nodeMap[key].score
+    });
 
     return lowest;
 }
