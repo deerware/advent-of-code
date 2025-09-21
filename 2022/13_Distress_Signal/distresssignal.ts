@@ -11,7 +11,7 @@ export default async function distresssignal() {
         ['Part 1', part1, 'input.txt', 6086],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 140],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 27930],
     ], parseData);
 }
 
@@ -69,11 +69,23 @@ async function part2(data: Data): Promise<number> {
         pairs.push(line[1])
     }
 
-    pairs.sort((a, b) => evaluate([a, b]) ? 1 : 0);
+    pairs = pairs.sort((a, b) => {
+        const ev = evaluate([a, b], true);
+        if (ev == null)
+            return 0;
+        return ev ? -1 : 1
+    });
 
-    console.log(pairs);
+    let decoderKey = 1;
+    const search1 = JSON.stringify([[2]]);
+    const search2 = JSON.stringify([[6]]);
+    for (let i = 0; i < pairs.length; i++) {
+        const pair = JSON.stringify(pairs[i]);
+        if (pair == search1 || pair == search2)
+            decoderKey *= i + 1;
+    }
 
-    return -Infinity;
+    return decoderKey;
 }
 
 function evaluate(pair: [Packet, Packet], depth?: false): boolean
