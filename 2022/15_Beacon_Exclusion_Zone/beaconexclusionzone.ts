@@ -1,0 +1,92 @@
+import log from '../../log'
+import { colors } from '../../types'
+import * as g from '../../global';
+import { mapInt } from '../../helpers/general';
+import { manhattan, Pos } from '../../helpers/map/grid';
+
+export default async function beaconexclusionzone() {
+    log('Day 15: Beacon Exclusion Zone');
+
+    await g.run('2022/15_Beacon_Exclusion_Zone', [
+        ['Part 1 test 1', part1, 'sampleData1.txt', 26, 10],
+        ['Part 1', part1, 'input.txt', 5100463, 2000000],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 56000011, 20],
+        ['Part 2', part2, 'input.txt', null, 4000000],
+    ], parseData);
+}
+
+type Data = ReturnType<typeof parseData>;
+function parseData(_data: string[]) {
+    return _data.map(_line => {
+        const line = _line.split(': closest beacon is at x=');
+
+        const sensor = line[0].split('x=')[1].split(', y=').map(mapInt) as Pos;
+        const beacon = line[1].split(', y=').map(mapInt) as Pos;
+
+        return { sensor, beacon };
+    });
+}
+
+type Map = { [y: number]: { [x: number]: string } };
+
+async function part1(data: Data, checkRow: number): Promise<number> {
+    const map: Map = {};
+
+    // data = [{ sensor: [8, 7], beacon: [2, 10] }];
+
+    let i = 0;
+    for (const { sensor, beacon } of data) {
+        // if (sensor[0] !== 8 || sensor[1] !== 7)
+        //     continue;
+
+        if (!map[beacon[1]])
+            map[beacon[1]] = [];
+
+        map[beacon[1]][beacon[0]] = 'B';
+
+        const distance = manhattan.distance(sensor, beacon);
+
+        // for (let y = sensor[1] - distance; y <= sensor[1] + distance; y++) {
+        //     if (y !== checkRow)
+        //         continue;
+
+        const y = checkRow;
+
+        if (y < sensor[1] - distance || y > sensor[1] + distance)
+            continue;
+
+        for (let x = sensor[0] - distance; x <= sensor[0] + distance; x++) {
+            if (manhattan.distance(sensor, [x, y]) > distance)
+                continue;
+
+            if (!map[y])
+                map[y] = [];
+
+            if (!map[y][x])
+                map[y][x] = '#';
+        }
+        // }
+
+        // console.log(`Rendered sensor ${++i} out of ${data.length}`)
+    }
+
+    // render(map);
+    return Object.values(map[checkRow]).filter(v => v == '#').length;
+}
+
+async function part2(data: Data, limit: number): Promise<number> {
+    return -Infinity;
+}
+
+function render(map: Map) {
+    for (let y = -2; y <= 22; y++) {
+        let line = y.toString().padStart(2, ' ') + ' ';
+
+        for (let x = -2; x <= 25; x++)
+            line += map[y]?.[x] ?? '.';
+
+        console.log(line);
+        line = '';
+    }
+}

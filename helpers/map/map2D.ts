@@ -117,7 +117,7 @@ export function move(
 }
 
 /** default = returns distances like [1, 3] */
-export function manhattan(
+function manhattan(
     pos1: Pos,
     pos2: Pos,
     /** true = returns distances like [1, 3] false = returns distances like [-1, 3] */
@@ -131,6 +131,13 @@ export function manhattan(
 
     return [dx, dy];
 }
+
+manhattan.distance = (pos1: Pos, pos2: Pos) => {
+    const distance = manhattan(pos1, pos2, true);
+    return distance[0] + distance[1];
+}
+
+export { manhattan };
 
 function same(pos1: Pos, pos2: Pos) {
     return same.X(pos1, pos2) && same.Y(pos1, pos2);

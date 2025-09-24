@@ -12,6 +12,7 @@ import monkeyinthemiddle from './2022/11_Monkey_in_the_Middle/monkeyinthemiddle'
 import hillclimbingalgorithm from './2022/12_Hill_Climbing_Algorithm/hillclimbingalgorithm';
 import distresssignal from './2022/13_Distress_Signal/distresssignal';
 import regolithreservoir from './2022/14_Regolith_Reservoir/regolithreservoir';
+import beaconexclusionzone from './2022/15_Beacon_Exclusion_Zone/beaconexclusionzone';
 import log from './log';
 
 (async () => {
@@ -29,7 +30,8 @@ import log from './log';
         // await monkeyinthemiddle();
         // await hillclimbingalgorithm();
         // await distresssignal();
-        await regolithreservoir();
+        // await regolithreservoir();
+        await beaconexclusionzone();
     } catch (e) {
         log('Error:', (e as any).message);
     }
