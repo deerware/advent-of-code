@@ -12,7 +12,7 @@ export default async function beaconexclusionzone() {
         ['Part 1', part1, 'input.txt', 5100463, 2000000],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 56000011, 20],
-        ['Part 2', part2, 'input.txt', null, 4000000],
+        ['Part 2', part2, 'input.txt', 11557863040754, 4000000],
     ], parseData);
 }
 
@@ -23,8 +23,9 @@ function parseData(_data: string[]) {
 
         const sensor = line[0].split('x=')[1].split(', y=').map(mapInt) as Pos;
         const beacon = line[1].split(', y=').map(mapInt) as Pos;
+        const distance = manhattan.distance(sensor, beacon)
 
-        return { sensor, beacon };
+        return { sensor, beacon, distance };
     });
 }
 
@@ -33,12 +34,9 @@ type Map = { [y: number]: { [x: number]: string } };
 async function part1(data: Data, checkRow: number): Promise<number> {
     const map: Map = {};
 
-    // data = [{ sensor: [8, 7], beacon: [2, 10] }];
-
     let i = 0;
     for (const { sensor, beacon } of data) {
-        // if (sensor[0] !== 8 || sensor[1] !== 7)
-        //     continue;
+        console.log(`Rendering sensors ${++i}/${data.length}`)
 
         if (!map[beacon[1]])
             map[beacon[1]] = [];
@@ -46,10 +44,6 @@ async function part1(data: Data, checkRow: number): Promise<number> {
         map[beacon[1]][beacon[0]] = 'B';
 
         const distance = manhattan.distance(sensor, beacon);
-
-        // for (let y = sensor[1] - distance; y <= sensor[1] + distance; y++) {
-        //     if (y !== checkRow)
-        //         continue;
 
         const y = checkRow;
 
@@ -66,17 +60,32 @@ async function part1(data: Data, checkRow: number): Promise<number> {
             if (!map[y][x])
                 map[y][x] = '#';
         }
-        // }
-
-        // console.log(`Rendered sensor ${++i} out of ${data.length}`)
     }
 
-    // render(map);
     return Object.values(map[checkRow]).filter(v => v == '#').length;
 }
 
 async function part2(data: Data, limit: number): Promise<number> {
-    return -Infinity;
+    for (let y = 0; y <= limit; y++) {
+        if (y % 100000 == 0)
+            console.log(`Checking rows ${Math.floor(100 / limit * y * 1000) / 1000} %`);
+
+        for (let x = 0; x <= limit; x++) {
+            let found = false;
+            for (const { sensor, distance } of data) {
+                const cd = manhattan.distance(sensor, [x, y])
+                if (cd <= distance) {
+                    found = true;
+                    x += distance - cd; // could be better if we're still before the sensor, and not after it, but this is enough for me.
+                    break;
+                }
+            }
+            if (!found)
+                return x * 4000000 + y;
+        }
+    }
+
+    throw new Error('Not found.');
 }
 
 function render(map: Map) {
