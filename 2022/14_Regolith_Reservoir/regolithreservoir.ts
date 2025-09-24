@@ -12,7 +12,7 @@ export default async function regolithreservoir() {
         ['Part 1', part1, 'input.txt', 665],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 93],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 25434],
     ], parseData);
 }
 
@@ -69,20 +69,27 @@ function parseData(_data: string[]) {
     return map;
 }
 
-async function part1(map: Data): Promise<number> {
+async function part0(map: Data, floor = false): Promise<number> {
     const sandIn: Pos = [500, 0];
+    const floorY = map.length + 1;
 
     let settled = 0;
     while (true) { // New sand entered
 
         if (map[sandIn[1]]?.[sandIn[0]])
-            throw 'Sand entry position occupied';
+            if (floor)
+                return settled;
+            else
+                throw 'Sand entry position occupied';
 
         let current = sandIn;
         while (true) { // Still the same sand loop
             let moved = false;
             for (const dir of [DIR8.DOWN, DIR8.DOWN_LEFT, DIR8.DOWN_RIGHT]) {
                 const next = move(current, dir);
+
+                if (floor && next[1] == floorY)
+                    break;
 
                 if (!map[next[1]]?.[next[0]]) {
                     current = next;
@@ -100,16 +107,18 @@ async function part1(map: Data): Promise<number> {
                 break;
             }
 
-            if (current[1] > map.length)
+            if (!floor && current[1] > map.length)
                 return settled;
         }
     }
+}
 
-    return -Infinity;
+async function part1(data: Data): Promise<number> {
+    return part0(data, false)
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    return part0(data, true)
 }
 
 function render(map: Data) {
