@@ -13,6 +13,7 @@ import hillclimbingalgorithm from './2022/12_Hill_Climbing_Algorithm/hillclimbin
 import distresssignal from './2022/13_Distress_Signal/distresssignal';
 import regolithreservoir from './2022/14_Regolith_Reservoir/regolithreservoir';
 import beaconexclusionzone from './2022/15_Beacon_Exclusion_Zone/beaconexclusionzone';
+import proboscideavolcanium from './2022/16_Proboscidea_Volcanium/proboscideavolcanium';
 import log from './log';
 
 (async () => {
@@ -31,7 +32,8 @@ import log from './log';
         // await hillclimbingalgorithm();
         // await distresssignal();
         // await regolithreservoir();
-        await beaconexclusionzone();
+        // await beaconexclusionzone();
+        await proboscideavolcanium();
     } catch (e) {
         log('Error:', (e as any).message);
     }
