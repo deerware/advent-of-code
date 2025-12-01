@@ -51,22 +51,25 @@ function parseData(_data: string[]) {
 async function part1({ map, start, target }: Data): Promise<number> {
     const mapSize: [number, number] = [map[0].length, map.length];
 
-    const nodeMap = dijkstras.xy(start, (current) => {
-        const next: Pos[] = [];
-        const height = map[current.tile[1]][current.tile[0]];
-        for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
-            const nPos = move(current.tile, dir);
-            if (!isWithinBounds(nPos, ...mapSize))
-                continue;
+    const nodeMap = dijkstras.xy({
+        startTile: start,
+        getNext(current) {
+            const next: Pos[] = [];
+            const height = map[current.tile[1]][current.tile[0]];
+            for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
+                const nPos = move(current.tile, dir);
+                if (!isWithinBounds(nPos, ...mapSize))
+                    continue;
 
-            const nHeight = map[nPos[1]][nPos[0]];
-            if (nHeight - height > 1)
-                continue;
+                const nHeight = map[nPos[1]][nPos[0]];
+                if (nHeight - height > 1)
+                    continue;
 
-            next.push(nPos);
+                next.push(nPos);
+            }
+
+            return next;
         }
-
-        return next;
     });
 
     return nodeMap[posKey(target)].score;
@@ -75,22 +78,24 @@ async function part1({ map, start, target }: Data): Promise<number> {
 async function part2({ map, start, target }: Data): Promise<number> {
     const mapSize: [number, number] = [map[0].length, map.length];
 
-    const nodeMap = dijkstras.xy(target, (current) => {
-        const next: Pos[] = [];
-        const height = map[current.tile[1]][current.tile[0]];
-        for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
-            const nPos = move(current.tile, dir);
-            if (!isWithinBounds(nPos, ...mapSize))
-                continue;
+    const nodeMap = dijkstras.xy({
+        startTile: target, getNext(current) {
+            const next: Pos[] = [];
+            const height = map[current.tile[1]][current.tile[0]];
+            for (const dir of [DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT]) {
+                const nPos = move(current.tile, dir);
+                if (!isWithinBounds(nPos, ...mapSize))
+                    continue;
 
-            const nHeight = map[nPos[1]][nPos[0]];
-            if (height - nHeight > 1)
-                continue;
+                const nHeight = map[nPos[1]][nPos[0]];
+                if (height - nHeight > 1)
+                    continue;
 
-            next.push(nPos);
+                next.push(nPos);
+            }
+
+            return next;
         }
-
-        return next;
     });
 
     let lowest = Infinity;
