@@ -6,7 +6,7 @@ import fs from "fs";
 import { colors } from "./types";
 import inputCrypt from "./inputCrypt";
 
-const defaultYear = 2024;
+const defaultYear = 2025;
 const defaultDay = new Date().getDate();
 const session = fs.readFileSync('secrets/session.txt', 'utf-8').trimEnd();
 
