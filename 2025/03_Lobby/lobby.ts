@@ -9,7 +9,7 @@ export default async function lobby() {
         ['Part 1 test 1', part1, 'sampleData1.txt', 357],
         ['Part 1', part1, 'input.txt', 17229],
         null,
-        ['Part 2 test 1', part2, 'sampleData1.txt', 0],
+        ['Part 2 test 1', part2, 'sampleData1.txt', 3121910778619],
         ['Part 2', part2, 'input.txt', null],
     ], parseData);
 }
@@ -20,33 +20,34 @@ function parseData(_data: string[]) {
 }
 
 async function part1(data: Data): Promise<number> {
-    let sum = 0;
-    for (const line of data) {
-        let max = 0;
-        let maxI = 0;
-
-        for (let i = 0; i < line.length - 1; i++) {
-            if (line[i] > max) {
-                max = line[i];
-                maxI = i;
-            }
-        }
-
-        sum = max * 10;
-
-        let max2 = 0;
-
-        for (let i = maxI + 1; i < line.length; i++) {
-            if (line[i] > max2)
-                max2 = line[i]
-        }
-
-        sum += max2;
-    }
-
-    return sum;
+    return part0(data, 2);
 }
 
 async function part2(data: Data): Promise<number> {
-    return -Infinity;
+    return part0(data, 12);
+}
+
+async function part0(data: Data, batteries: number): Promise<number> {
+    let sum = 0;
+    for (const line of data) {
+        let maxI = -1;
+
+        for (let b = 1; b <= batteries; b++) {
+            let max = 0;
+            maxI++;
+            for (let i = maxI; i < (line.length - batteries + b); i++) {
+                if (line[i] > max) {
+                    max = line[i];
+                    maxI = i;
+                }
+
+                if (max == 9)
+                    break;
+            }
+
+            sum += max * Math.pow(10, batteries - b);
+        }
+    }
+
+    return sum;
 }
