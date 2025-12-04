@@ -2,12 +2,14 @@ import log from './log';
 import secretentrance from './2025/01_Secret_Entrance/secretentrance';
 import giftshop from './2025/02_Gift_Shop/giftshop';
 import lobby from './2025/03_Lobby/lobby';
+import printingdepartment from './2025/04_Printing_Department/printingdepartment';
 
 (async () => {
     try {
         // await secretentrance();
         // await giftshop();
-        await lobby()
+        // await lobby();
+        await printingdepartment();
     } catch (e) {
         log('Error:', (e as any).message);
     }

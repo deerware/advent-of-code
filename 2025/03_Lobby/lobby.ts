@@ -10,7 +10,7 @@ export default async function lobby() {
         ['Part 1', part1, 'input.txt', 17229],
         null,
         ['Part 2 test 1', part2, 'sampleData1.txt', 3121910778619],
-        ['Part 2', part2, 'input.txt', null],
+        ['Part 2', part2, 'input.txt', 170520923035051],
     ], parseData);
 }
 
