@@ -194,8 +194,24 @@ export function posKey(pos: Pos) {
     return `x${pos[0]}y${pos[1]}`;
 }
 
-export function isWithinBounds(pos: Pos, xDim: number, yDim: number) {
-    return pos[0] >= 0 && pos[0] < xDim && pos[1] >= 0 && pos[1] < yDim;
+export function isWithinBounds<T>(pos: Pos, map: T[][]): boolean;
+export function isWithinBounds<T>(pos: Pos, xDim: number, yDim: number): boolean;
+export function isWithinBounds<T>(pos: Pos, xDimOrMap: number | T[][], yDim?: number): boolean {
+    if (typeof xDimOrMap === "number" && yDim) {
+        const xDim = xDimOrMap;
+
+        return pos[0] >= 0 && pos[0] < xDim && pos[1] >= 0 && pos[1] < yDim;
+    }
+
+    if (Array.isArray(xDimOrMap)) {
+        const map = xDimOrMap;
+        if (map.length == 0)
+            return false;
+
+        return isWithinBounds(pos, map[0].length, map.length);
+    }
+
+    throw new Error('InvalidInvocation isWithinBounds');
 }
 
 export function forEach<T>(map: T[][], callback: ((tile: T, pos: Pos) => boolean | void)) {
@@ -204,4 +220,11 @@ export function forEach<T>(map: T[][], callback: ((tile: T, pos: Pos) => boolean
         for (let x = 0; x < row.length; x++)
             callback(row[x], [x, y]);
     }
+}
+
+export function tile<T>(map: T[][], pos: Pos, newVal?: T) {
+    if (newVal !== undefined)
+        map[pos[1]][pos[0]] = newVal;
+
+    return map[pos[1]][pos[0]];
 }

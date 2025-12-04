@@ -1,7 +1,7 @@
 import * as map2D from './map2D'
 
 /** Cartesian = x → right, y ↑ up */
-export { Pos, DIR_ANY, DIR, DIR_DIAG, DIR8, dirFrom, dirFromURDL, dirFromArrows, manhattan, same, posKey, isWithinBounds, forEach, } from './map2D';
+export { Pos, DIR_ANY, DIR, DIR_DIAG, DIR8, dirFrom, dirFromURDL, dirFromArrows, manhattan, same, posKey, isWithinBounds, forEach, tile, } from './map2D';
 
 export function move(pos: map2D.Pos, dir: map2D.DIR_ANY, count?: number) {
     return map2D.move(pos, dir, count, map2D.Axis.Cartesian)

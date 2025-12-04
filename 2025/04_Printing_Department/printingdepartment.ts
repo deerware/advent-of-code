@@ -42,7 +42,7 @@ async function part2(_data: Data): Promise<number> {
 
         accessible += result.length;
         for (const pos of result) {
-            data[pos[1]][pos[0]] = TILE['.'];
+            grid.tile(data, pos, TILE['.']);
         }
     }
 }
@@ -57,10 +57,10 @@ async function part0(data: Data): Promise<grid.Pos[]> {
         let adjacent = 0;
         for (const dir of Object.values(grid.DIR8)) {
             const newPos = grid.move(pos, dir);
-            if (!grid.isWithinBounds(newPos, data[0].length, data.length))
+            if (!grid.isWithinBounds(newPos, data))
                 continue;
 
-            if (data[newPos[1]][newPos[0]] == TILE['@'])
+            if (grid.tile(data, newPos) == TILE['@'])
                 adjacent++;
 
             if (adjacent >= 4)
