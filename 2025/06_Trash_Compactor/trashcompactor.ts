@@ -9,9 +9,10 @@ export default async function trashcompactor() {
     await g.run('2025/06_Trash_Compactor', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 4277556],
         ['Part 1', part1, 'input.txt', 6503327062445],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
-        ['Part 2', part2, 'input.txt', null],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 3263827],
+        ['Part 2 test 2', part2, 'sampleData2.txt', 3263827 + 176],
+        ['Part 2', part2, 'input.txt', 9640641878593],
     ], parseData);
 }
 
@@ -19,13 +20,15 @@ type Data = ReturnType<typeof parseData>;
 function parseData(_data: string[]) {
     let columns: number[][] = [];
 
-    const operations = _data.pop()!.split(/ +/) as ('*' | '+')[];
+    const part1Data = [..._data];
+
+    const operations = part1Data.pop()!.split(/ +/) as ('*' | '+')[];
     if (operations[0] as any == "")
         operations.shift();
     if (operations[operations.length - 1] as any == "")
         operations.pop();
 
-    for (const line of _data) {
+    for (const line of part1Data) {
         const cols = line.split(/ +/);
 
         if (cols[0] == "")
@@ -45,7 +48,7 @@ function parseData(_data: string[]) {
         }
     }
 
-    return { columns, operations };
+    return { columns, operations, raw: _data };
 }
 
 async function part1({ columns, operations }: Data): Promise<number> {
@@ -59,6 +62,35 @@ async function part1({ columns, operations }: Data): Promise<number> {
     return total;
 }
 
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
+async function part2({ raw: data }: Data): Promise<number> {
+    const operations = data.pop()!;
+
+    const max = data.reduce((max, line) => line.length > max ? line.length : max, 0);
+
+    let total = 0;
+
+    let buffer = [];
+    for (let i = max - 1; i >= 0; i--) {
+        let number = '';
+        for (const row of data)
+            number += row[i] != ' ' ? (row[i] ?? '') : '';
+
+        if (number == "")
+            continue;
+
+        buffer.push(parseInt(number))
+
+        if (operations[i] == " " || operations[i] == "" || !operations[i])
+            continue;
+
+        // console.log(JSON.stringify(buffer));
+        if (operations[i] == "+")
+            total += buffer.reduce((sum, column) => sum + column, 0);
+        else
+            total += buffer.reduce((sum, column) => sum * column, 1);
+
+        buffer.length = 0;
+    }
+
+    return total;
 }
