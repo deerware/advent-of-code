@@ -5,6 +5,7 @@ import lobby from './2025/03_Lobby/lobby';
 import printingdepartment from './2025/04_Printing_Department/printingdepartment';
 import cafeteria from './2025/05_Cafeteria/cafeteria';
 import trashcompactor from './2025/06_Trash_Compactor/trashcompactor';
+import laboratories from './2025/07_Laboratories/laboratories';
 
 (async () => {
     try {
@@ -13,7 +14,8 @@ import trashcompactor from './2025/06_Trash_Compactor/trashcompactor';
         // await lobby();
         // await printingdepartment();
         // await cafeteria();
-        await trashcompactor();
+        // await trashcompactor();
+        await laboratories();
     } catch (e) {
         log('Error:', (e as any).message);
     }
