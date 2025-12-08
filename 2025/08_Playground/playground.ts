@@ -7,11 +7,11 @@ export default async function playground() {
     log('Day 8: Playground');
 
     await g.run('2025/08_Playground', [
-        ['Part 1 test 1', part1, 'sampleData1.txt', 40, 10],
-        ['Part 1', part1, 'input.txt', 244188, 1000],
+        ['Part 1 test 1', part0, 'sampleData1.txt', 40, 10],
+        ['Part 1', part0, 'input.txt', 244188, 1000],
         null,
-        ['Part 2 test 1', part1, 'sampleData1.txt', 25272, true],
-        ['Part 2', part1, 'input.txt', null, true],
+        ['Part 2 test 1', part0, 'sampleData1.txt', 25272, true],
+        ['Part 2', part0, 'input.txt', null, true],
     ], parseData);
 }
 type Pos = [x: number, y: number, z: number];
@@ -24,7 +24,7 @@ function parseData(_data: string[]) {
     } as Box));
 }
 
-async function part1(boxes: Data, noOfConnections: number | true): Promise<number> {
+async function part0(boxes: Data, noOfConnections: number | true): Promise<number> {
     let distances = [];
 
     for (let i = 0; i < boxes.length; i++)
@@ -36,8 +36,6 @@ async function part1(boxes: Data, noOfConnections: number | true): Promise<numbe
 
     distances = distances.sort((a, b) => a.d - b.d);
 
-    // let mainGroup = boxes[0].group;
-    // let nullBox: Box | undefined = boxes[0];
     for (let i = 0; noOfConnections === true || i < noOfConnections; i++) {
         const dist = distances.shift();
         if (!dist)
@@ -58,30 +56,10 @@ async function part1(boxes: Data, noOfConnections: number | true): Promise<numbe
                 box.group = newId;
         }
 
-        let randomBox = boxes[0];
-        if (randomBox.group !== null) {
-            const box = boxes.find(b => b.group != randomBox.group);
-            if (!box) {
-                console.log(dist.box1, dist.box2);
+        const randomBox = boxes[0];
+        if (randomBox.group !== null)
+            if (!boxes.find(b => b.group != randomBox.group))
                 return dist.box1.pos[0] * dist.box2.pos[0];
-            }
-        }
-
-        // if (nullBox) {
-        //     if (!!nullBox.group)
-        //         nullBox = boxes.find(b => !b.group);
-
-        //     console.log(nullBox?.group);
-        // }
-
-        // if (!nullBox) {
-        //     let mainGroup = boxes[0].group;
-        //     let box = boxes.find(b => b.group != mainGroup)
-        //     if (!box)
-        //         return dist.box1.pos[2] * dist.box2.pos[2];
-
-        //     console.log(box);
-        // }
     }
 
     const result = boxes
