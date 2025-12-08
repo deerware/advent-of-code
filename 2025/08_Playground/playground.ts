@@ -9,9 +9,9 @@ export default async function playground() {
     await g.run('2025/08_Playground', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 40, 10],
         ['Part 1', part1, 'input.txt', 244188, 1000],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0, 0],
-        ['Part 2', part2, 'input.txt', null, 0],
+        null,
+        ['Part 2 test 1', part1, 'sampleData1.txt', 25272, true],
+        ['Part 2', part1, 'input.txt', null, true],
     ], parseData);
 }
 type Pos = [x: number, y: number, z: number];
@@ -24,7 +24,7 @@ function parseData(_data: string[]) {
     } as Box));
 }
 
-async function part1(boxes: Data, noOfConnections: number): Promise<number> {
+async function part1(boxes: Data, noOfConnections: number | true): Promise<number> {
     let distances = [];
 
     for (let i = 0; i < boxes.length; i++)
@@ -36,37 +36,58 @@ async function part1(boxes: Data, noOfConnections: number): Promise<number> {
 
     distances = distances.sort((a, b) => a.d - b.d);
 
-    for (let i = 0; i < noOfConnections; i++) {
-        const dist = distances.shift() ?? (() => { throw new Error('Not enough entries'); })();
+    // let mainGroup = boxes[0].group;
+    // let nullBox: Box | undefined = boxes[0];
+    for (let i = 0; noOfConnections === true || i < noOfConnections; i++) {
+        const dist = distances.shift();
+        if (!dist)
+            throw new Error('Not enough entries.');
 
         if (!dist.box1.group && !dist.box2.group) {
             dist.box1.group = randomUUID();
             dist.box2.group = dist.box1.group;
+        } else if (dist.box1.group == dist.box2.group) {
             continue;
-        }
-
-        if (dist.box1.group == dist.box2.group)
-            continue;
-
-        if (!dist.box1.group || !dist.box2.group) {
+        } else if (!dist.box1.group || !dist.box2.group) {
             const id = dist.box1.group ?? dist.box2.group;
             dist.box1.group = id;
             dist.box2.group = id;
-            continue;
+        } else {
+            const newId = randomUUID();
+            for (const box of boxes.filter(b => b.group == dist.box1.group || b.group == dist.box2.group))
+                box.group = newId;
         }
 
-        const newId = randomUUID();
-        for (const box of boxes.filter(b => b.group == dist.box1.group || b.group == dist.box2.group))
-            box.group = newId;
-    }
+        let randomBox = boxes[0];
+        if (randomBox.group !== null) {
+            const box = boxes.find(b => b.group != randomBox.group);
+            if (!box) {
+                console.log(dist.box1, dist.box2);
+                return dist.box1.pos[0] * dist.box2.pos[0];
+            }
+        }
 
-    // console.log(boxes.filter(b => !!b.group));
+        // if (nullBox) {
+        //     if (!!nullBox.group)
+        //         nullBox = boxes.find(b => !b.group);
+
+        //     console.log(nullBox?.group);
+        // }
+
+        // if (!nullBox) {
+        //     let mainGroup = boxes[0].group;
+        //     let box = boxes.find(b => b.group != mainGroup)
+        //     if (!box)
+        //         return dist.box1.pos[2] * dist.box2.pos[2];
+
+        //     console.log(box);
+        // }
+    }
 
     const result = boxes
         .reduce((acc, b) => {
             if (!b.group)
                 return acc;
-            // b.group = "null";
 
             if (acc[b.group])
                 return (acc[b.group].push(b), acc);
@@ -76,14 +97,8 @@ async function part1(boxes: Data, noOfConnections: number): Promise<number> {
         }, {} as { [key: string]: Box[] });
 
     const sorted = Object.values(result).sort((a, b) => b.length - a.length);
-    console.log(sorted);
-    // console.log(sorted[0].length * sorted[1].length * sorted[2].length);
 
     return sorted[0].length * sorted[1].length * sorted[2].length;
-}
-
-async function part2(data: Data): Promise<number> {
-    return -Infinity;
 }
 
 function distance3D([x1, y1, z1]: Pos, [x2, y2, z2]: Pos): number {
