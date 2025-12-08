@@ -11,7 +11,7 @@ export default async function playground() {
         ['Part 1', part0, 'input.txt', 244188, 1000],
         null,
         ['Part 2 test 1', part0, 'sampleData1.txt', 25272, true],
-        ['Part 2', part0, 'input.txt', null, true],
+        ['Part 2', part0, 'input.txt', 8361881885, true],
     ], parseData);
 }
 type Pos = [x: number, y: number, z: number];
@@ -56,10 +56,12 @@ async function part0(boxes: Data, noOfConnections: number | true): Promise<numbe
                 box.group = newId;
         }
 
-        const randomBox = boxes[0];
-        if (randomBox.group !== null)
-            if (!boxes.find(b => b.group != randomBox.group))
-                return dist.box1.pos[0] * dist.box2.pos[0];
+        if (noOfConnections === true) {
+            const randomBox = boxes[0];
+            if (randomBox.group !== null)
+                if (!boxes.find(b => b.group != randomBox.group))
+                    return dist.box1.pos[0] * dist.box2.pos[0];
+        }
     }
 
     const result = boxes
