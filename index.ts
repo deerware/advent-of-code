@@ -7,6 +7,7 @@ import cafeteria from './2025/05_Cafeteria/cafeteria';
 import trashcompactor from './2025/06_Trash_Compactor/trashcompactor';
 import laboratories from './2025/07_Laboratories/laboratories';
 import playground from './2025/08_Playground/playground';
+import movietheater from './2025/09_Movie_Theater/movietheater';
 
 (async () => {
     try {
@@ -17,7 +18,8 @@ import playground from './2025/08_Playground/playground';
         // await cafeteria();
         // await trashcompactor();
         // await laboratories();
-        await playground();
+        // await playground();
+        await movietheater();
     } catch (e) {
         log('Error:', (e as any).message);
     }
