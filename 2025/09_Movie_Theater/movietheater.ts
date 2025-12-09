@@ -9,8 +9,8 @@ export default async function movietheater() {
     await g.run('2025/09_Movie_Theater', [
         ['Part 1 test 1', part1, 'sampleData1.txt', 50],
         ['Part 1', part1, 'input.txt', 4756718172],
-        false,
-        ['Part 2 test 1', part2, 'sampleData2.txt', 0],
+        null,
+        ['Part 2 test 1', part2, 'sampleData1.txt', 24],
         ['Part 2', part2, 'input.txt', null],
     ], parseData);
 }
@@ -21,15 +21,12 @@ function parseData(_data: string[]) {
 }
 
 async function part1(data: Data): Promise<number> {
-    let sizes = [];
-    for (let i = 0; i < data.length; i++) {
-        for (let j = +1; j < data.length; j++) {
-            sizes.push({ p1: data[i], p2: data[j], rect: calcRect(data[i], data[j]) });
-        }
-    }
+    let max = -Infinity;
+    for (let i = 0; i < data.length; i++)
+        for (let j = i + 1; j < data.length; j++)
+            max = Math.max(max, calcRect(data[i], data[j]));
 
-    sizes = sizes.sort((a, b) => b.rect - a.rect);
-    return sizes[0].rect;
+    return max;
 }
 
 async function part2(data: Data): Promise<number> {
